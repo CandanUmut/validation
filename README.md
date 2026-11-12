@@ -2,6 +2,7 @@
 
 A small web app for daily practice in LTE and 5G RAN validation. It installs to the home screen and works offline after the first visit.
 
+
 **Open it:** https://candanumut.github.io/validation/
 
 ## What is inside
