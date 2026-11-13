@@ -1,0 +1,65 @@
+id: c-t304
+order: 7
+title: The handover that goes nowhere
+tag: Mobility
+brief: Handover from cell 214 to cell 37 fails about one time in three. The other direction is fine.
+setup: Two LTE cells on a bench with programmable attenuators.
+log:
+  - "[RRC] MeasurementReport event=A3 nbr_pci=37 rsrp=-101"
+  - "[X2AP] HandoverRequest target_pci=37"
+  - "[X2AP] HandoverRequestAcknowledge preamble_id=52"
+  - "[RRC] RRCConnectionReconfiguration mobilityControlInfo target_pci=37 t304=100ms"
+  - "[MAC] RA target pci=37 preamble_id=52 attempt=1 tx_pwr=2dBm"
+  - "[MAC] RAR window expired"
+  - "[MAC] RA target pci=37 preamble_id=52 attempt=2 tx_pwr=4dBm"
+  - "[MAC] RAR window expired"
+  - "[RRC] T304 expiry: handover failure"
+  - "[RRC] ReestablishmentRequest pci=214 cause=handoverFailure"
+decisions:
+  - question: Which half of the handover failed?
+    options:
+      - text: "Execution: preparation finished, the command arrived, access to the target failed"
+        score: 2
+        feedback: Yes. Request, acknowledge and command are all in the log.
+      - text: "Preparation: the target refused"
+        score: 0
+        feedback: The target acknowledged and assigned preamble 52.
+      - text: The measurement report was lost
+        score: 0
+        feedback: The report is the first line of the log.
+  - question: The phone made two preamble attempts before T304 expired. What do you notice?
+    options:
+      - text: Power started low (2 dBm) and only two attempts fit into 100 ms
+        score: 2
+        feedback: Right. The phone was still ramping when the timer ran out.
+      - text: The preamble ID is wrong
+        score: 0
+        feedback: It uses 52, the one the target assigned.
+      - text: The phone used contention-based access
+        score: 0
+        feedback: It used the dedicated preamble.
+  - question: What do you test next?
+    options:
+      - text: A longer T304, and the target cell's PRACH target power
+        score: 2
+        feedback: Yes. Either give the phone time to ramp, or let it start closer to a detectable level. Then check that failures stop.
+      - text: A smaller A3 offset
+        score: 1
+        feedback: That changes when handover starts. It may help a little by handing over at a stronger target level, but it does not address the short timer.
+      - text: Disable handover
+        score: 0
+        feedback: That removes the feature, not the bug.
+cause:
+  question: Root cause?
+  options:
+    - Phone ignores the handover command
+    - T304 of 100 ms is too short for the power ramping needed on the target cell
+    - X2 link failure
+    - PCI confusion
+  answer: 1
+  feedback: T304 must cover the worst realistic access time to the target, including several ramping steps. On long-delay links it needs even more room.
+bug: "HO 214 -> 37 execution fails 1 in 3: T304=100 ms expires after 2 preamble attempts (2, 4 dBm) while still ramping"
+learn:
+  - Split handover into preparation and execution before anything else.
+  - Timers and power ramping interact. A short timer hides behind a 'radio' symptom.
+  - Asymmetric failures (one direction only) point to one cell's settings.

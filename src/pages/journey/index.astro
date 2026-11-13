@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { chapters, pad2 } from '../../lib/data';
+import { u } from '../../lib/url';
+const ch = await chapters();
+const total = ch.length * 3;
+const lanes = (l: string[]) => l.map((x) => `<span>${x}</span>`).join('<em>↔</em>');
+---
+<Base tab="journey" title="Journey">
+  <div class="head">
+    <span class="eyebrow">Journey · <b id="jp">0</b> / {total} passes</span>
+    <h1 class="h h1">One connection, end to end</h1>
+    <p class="sub">Follow one phone from power-on to data, handover and failure. Each chapter has three passes: predict each step, fill the gaps, then rebuild the flow from memory.</p>
+  </div>
+  <div class="sec" style="border-top:1px solid var(--rule)">
+    {ch.map((c) => (
+      <a class="chap" href={u(`journey/${c.id}/`)} data-ch={c.id}>
+        <div class="top-l"><span class="num">{pad2(c.order)}</span><span class="tt">{c.title}</span><span class="tag next" hidden>Next</span><span class="tag pass" hidden>Rebuilt</span></div>
+        <p class="ss">{c.summary}</p>
+        <div class="meta">
+          <span class="lanes" set:html={lanes(c.lanes)} />
+          <span>{c.steps.length} steps</span>
+          <span class="passes" aria-label="Passes done"><i>P1</i><i>P2</i><i>P3</i></span>
+        </div>
+      </a>
+    ))}
+  </div>
+  <script type="application/json" id="d-ids" set:html={JSON.stringify(ch.map((c) => c.id))} />
+  <script>
+    import { jLevel } from '../../scripts/store';
+    import { $$, data } from '../../scripts/util';
+    const ids = data<string[]>('d-ids');
+    let next: string | null = null;
+    for (let lv = 0; lv < 3 && !next; lv++) next = ids.find((id) => jLevel(id) === lv) || null;
+    let sum = 0;
+    for (const a of $$('[data-ch]')) {
+      const id = a.dataset.ch!, lv = jLevel(id); sum += lv;
+      a.querySelectorAll('.passes i').forEach((i, k) => i.classList.toggle('on', k < lv));
+      a.querySelector('.num')!.classList.toggle('on', lv > 0 || id === next);
+      (a.querySelector('.tag.next') as HTMLElement).hidden = id !== next;
+      (a.querySelector('.tag.pass') as HTMLElement).hidden = lv < 3;
+    }
+    document.getElementById('jp')!.textContent = String(sum);
+  </script>
+</Base>

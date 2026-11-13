@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import { terms, termCats } from '../../lib/data';
+import { u } from '../../lib/url';
+const ts = (await terms()).slice().sort((a, b) => a.term.localeCompare(b.term, 'en', { sensitivity: 'base' }));
+const cats = await termCats();
+---
+<Base tab="library" title="Terms">
+  <div class="back"><a href={u('library/')}>‹ Library</a><span>{ts.length} terms</span></div>
+  <h1 class="h h2">Terms</h1>
+  <input class="field" id="q" type="search" placeholder={`Filter ${ts.length} terms`} autocomplete="off" aria-label="Filter terms" style="margin-top:10px">
+  <div class="chips" style="margin-top:12px" role="group" aria-label="Category">
+    <button class="chip" data-cat="" aria-pressed="true">All</button>
+    {Object.entries(cats).map(([id, name]) => <button class="chip" data-cat={id} aria-pressed="false">{name} <span class="c">{ts.filter((t) => t.category === id).length}</span></button>)}
+  </div>
+  <div id="list" style="border-top:1px solid var(--rule);margin-top:6px">
+    {ts.map((t) => <div class="term" data-cat={t.category} data-x={(t.term + ' ' + t.meaning).toLowerCase()}><div class="tt"><b>{t.term}</b><span>{cats[t.category]}</span></div><p>{t.meaning}</p></div>)}
+  </div>
+  <p class="note sec" id="none" hidden>No terms match. <a href={u('search/')}>Search everything</a> instead.</p>
+  <script>
+    import { $$ } from '../../scripts/util';
+    const q = document.getElementById('q') as HTMLInputElement, rows = $$('.term');
+    let cat = '';
+    const apply = () => { const v = q.value.trim().toLowerCase(); let n = 0; for (const r of rows) { const ok = (!cat || r.dataset.cat === cat) && (!v || r.dataset.x!.includes(v)); r.hidden = !ok; if (ok) n++; } document.getElementById('none')!.hidden = n > 0; };
+    for (const b of $$('.chip[data-cat]')) b.addEventListener('click', () => { cat = b.dataset.cat!; for (const x of $$('.chip[data-cat]')) x.setAttribute('aria-pressed', String(x === b)); apply(); });
+    q.addEventListener('input', apply);
+    q.value = new URLSearchParams(location.search).get('q') || ''; apply();
+  </script>
+</Base>

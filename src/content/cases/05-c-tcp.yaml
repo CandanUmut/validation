@@ -1,0 +1,64 @@
+id: c-tcp
+order: 5
+title: UDP is fine, TCP is not
+tag: Throughput
+brief: On a link with extra delay, UDP downlink reaches the expected rate but TCP gets less than half of it.
+setup: LTE cell with added delay. HARQ round trip is now about 16 ms instead of 8.
+log:
+  - "[IPERF] udp dl=17.6 Mbps loss=0.1%"
+  - "[IPERF] tcp dl=7.9 Mbps retrans=3120"
+  - "[RLC] rx sn=204 missing, t_reordering start 15ms"
+  - "[RLC] t_reordering expiry, STATUS nack_sn=204"
+  - "[MAC] harq=5 retx rv=2 crc=ok (sn=204 delivered)"
+  - "[RLC] duplicate sn=204 discarded"
+  - "[RLC] rx sn=231 missing, t_reordering start 15ms"
+  - "[RLC] t_reordering expiry, STATUS nack_sn=231"
+  - "[RLC] duplicate sn=231 discarded"
+decisions:
+  - question: UDP gets the full rate and TCP gets half. What does that tell you first?
+    options:
+      - text: "The radio capacity is there. Something TCP is sensitive to is wrong: delay, reordering or loss patterns"
+        score: 2
+        feedback: Yes. UDP shows what the link can carry. TCP shows what the user gets.
+      - text: The radio link is too weak
+        score: 0
+        feedback: UDP at full rate with 0.1% loss says the link is fine.
+      - text: The server is too slow
+        score: 1
+        feedback: Worth ruling out, but the same server delivers UDP at full rate, and the RLC lines show something specific.
+  - question: Read the RLC lines. What pattern repeats?
+    options:
+      - text: The reordering timer expires, RLC asks for a retransmission, then the original arrives anyway and one copy is thrown away
+        score: 2
+        feedback: Right. RLC gives up on data that was still coming through HARQ.
+      - text: HARQ is failing completely
+        score: 0
+        feedback: The HARQ retransmission succeeds each time (crc=ok).
+      - text: Sequence numbers are random
+        score: 0
+        feedback: They are in order. Only single PDUs are late.
+  - question: The timer is 15 ms. The HARQ round trip is about 16 ms. What is the fix to test?
+    options:
+      - text: Raise t-Reordering above the worst-case HARQ delay
+        score: 2
+        feedback: Yes. The timer has to outlast HARQ, or RLC retransmits needlessly and TCP sees delay and duplicates.
+      - text: Lower the MCS
+        score: 0
+        feedback: The first-transmission errors are normal. The problem is the reaction to them.
+      - text: Switch RLC to unacknowledged mode
+        score: 0
+        feedback: That removes reliability and would hurt TCP more.
+cause:
+  question: Root cause?
+  options:
+    - Backhaul congestion
+    - RLC t-Reordering (15 ms) shorter than the HARQ round trip on this link
+    - iperf server CPU limit
+    - Phone category too low
+  answer: 1
+  feedback: Timers tuned for a normal 8 ms HARQ round trip break when the link gets longer. Every layer 2 timer needs to be checked against the real delay.
+bug: "TCP DL at 45% of UDP rate with added delay: t-Reordering 15 ms < HARQ RTT 16 ms causes spurious RLC retransmissions and duplicates"
+learn:
+  - Run UDP and TCP side by side to separate radio from transport.
+  - Layer 2 timers must be longer than the delays below them.
+  - Duplicates in a log mean something was retransmitted that did not need to be.

@@ -1,0 +1,197 @@
+# Review cards for numbers and facts. id keeps v1 review progress.
+- id: f-lte-subcarrier-spacing-and-resource-block-width
+  question: LTE subcarrier spacing and resource block width?
+  answer: 15 kHz. One resource block is 12 subcarriers = 180 kHz.
+  group: Numbers
+- id: f-resource-blocks-for-lte-1-4-3-5-10-15-20-mhz
+  question: Resource blocks for LTE 1.4, 3, 5, 10, 15, 20 MHz?
+  answer: 6, 15, 25, 50, 75, 100.
+  group: Numbers
+- id: f-nr-subcarrier-spacings-and-their-slot-lengths
+  question: NR subcarrier spacings and their slot lengths?
+  answer: 15, 30, 60, 120 kHz give 1, 0.5, 0.25, 0.125 ms. A slot is always 14 symbols.
+  group: Numbers
+- id: f-fr1-and-fr2-ranges
+  question: FR1 and FR2 ranges?
+  answer: "FR1: 410 MHz to 7.125 GHz. FR2: mmWave, 24.25 GHz and up."
+  group: Numbers
+- id: f-how-many-physical-cell-ids-in-lte-and-in-nr
+  question: How many physical cell IDs in LTE and in NR?
+  answer: 504 in LTE, 1008 in NR.
+  group: Numbers
+- id: f-typical-maximum-phone-transmit-power
+  question: Typical maximum phone transmit power?
+  answer: 23 dBm = 200 mW (power class 3).
+  group: Numbers
+- id: f-usual-first-transmission-bler-target
+  question: Usual first-transmission BLER target?
+  answer: About 10%.
+  group: Numbers
+- id: f-lte-fdd-harq-timing
+  question: LTE FDD HARQ timing?
+  answer: Feedback 4 ms after the data. Uplink retransmission 8 ms after the first transmission.
+  group: Numbers
+- id: f-harq-processes-lte-fdd-downlink-nr-nr-ntn-releas
+  question: "HARQ processes: LTE FDD downlink, NR, NR-NTN (Release 17)?"
+  answer: 8, up to 16, up to 32.
+  group: Numbers
+- id: f-lte-timing-advance-step-size-and-maximum-range
+  question: "LTE timing advance: step size and maximum range?"
+  answer: 16 Ts = 0.52 microseconds = about 78 m. Maximum 1282 in the response, about 100 km.
+  group: Numbers
+- id: f-thermal-noise-density
+  question: Thermal noise density?
+  answer: -174 dBm per Hz. Add 10 log10(bandwidth) and the noise figure.
+  group: Numbers
+- id: f-noise-floor-of-a-5-mhz-lte-receiver-with-7-db-no
+  question: Noise floor of a 5 MHz LTE receiver with 7 dB noise figure?
+  answer: -174 + 66.5 + 7 = about -100.5 dBm (4.5 MHz occupied).
+  group: Numbers
+- id: f-what-do-3-db-and-10-db-mean
+  question: What do +3 dB and +10 dB mean?
+  answer: Double the power, and ten times the power.
+  group: Numbers
+- id: f-convert-0-10-20-23-30-dbm-to-power
+  question: Convert 0, 10, 20, 23, 30 dBm to power.
+  answer: 1 mW, 10 mW, 100 mW, 200 mW, 1 W.
+  group: Numbers
+- id: f-free-space-path-loss-formula
+  question: Free-space path loss formula?
+  answer: 32.45 + 20 log10(distance in km) + 20 log10(frequency in MHz).
+  group: Numbers
+- id: f-rule-of-thumb-rsrp-levels
+  question: Rule-of-thumb RSRP levels?
+  answer: -80 dBm strong, -100 fair, -110 weak, about -120 cell edge.
+  group: Numbers
+- id: f-rule-of-thumb-sinr-levels
+  question: Rule-of-thumb SINR levels?
+  answer: Above 20 dB excellent, 13 to 20 good, 0 to 13 usable, below 0 poor.
+  group: Numbers
+- id: f-leo-satellite-speed-and-delay-per-300-km
+  question: LEO satellite speed, and delay per 300 km?
+  answer: About 7.7 km/s. Light takes 1 ms per 300 km.
+  group: Numbers
+- id: f-t300-t304-t310-t311-what-does-each-guard
+  question: "T300, T304, T310, T311: what does each guard?"
+  answer: T300 RRC setup. T304 handover. T310 radio link monitoring. T311 cell search after failure.
+  group: Timers
+- id: f-n310-and-n311
+  question: N310 and N311?
+  answer: N310 out-of-sync indications start T310. N311 in-sync indications stop it.
+  group: Timers
+- id: f-t3410-t3411-t3402
+  question: T3410, T3411, T3402?
+  answer: Attach guard 15 s. Retry wait 10 s. Back-off 12 min after 5 failed attempts.
+  group: Timers
+- id: f-t3510-t3511-t3502
+  question: T3510, T3511, T3502?
+  answer: 5G registration guard 15 s. Retry wait 10 s. Back-off 12 min.
+  group: Timers
+- id: f-what-happens-when-the-time-alignment-timer-expir
+  question: What happens when the time alignment timer expires?
+  answer: The phone is out of uplink sync and must run random access before sending.
+  group: Timers
+- id: f-events-a1-a2-a3-a4-a5-b1-in-one-line-each
+  question: Events A1, A2, A3, A4, A5, B1 in one line each.
+  answer: A1 serving above threshold. A2 serving below. A3 neighbor better than serving by offset. A4 neighbor above threshold. A5 serving below and neighbor above. B1 other-technology neighbor above threshold.
+  group: Events
+- id: f-the-four-radio-link-failure-triggers
+  question: The four radio link failure triggers?
+  answer: T310 expiry, random access failure, RLC maximum retransmissions, handover failure (T304).
+  group: Events
+- id: f-the-three-re-establishment-causes
+  question: The three re-establishment causes?
+  answer: otherFailure, handoverFailure, reconfigurationFailure.
+  group: Events
+- id: f-reject-causes-3-7-11-12-15-22
+  question: Reject causes 3, 7, 11, 12, 15, 22?
+  answer: Illegal UE. Service not allowed. PLMN not allowed. Tracking area not allowed. No suitable cells in tracking area. Congestion.
+  group: Causes
+- id: f-session-reject-cause-27-and-33
+  question: Session reject cause 27 and 33?
+  answer: "27: missing or unknown APN/DNN. 33: requested service option not subscribed."
+  group: Causes
+- id: f-lte-core-functions-and-their-5g-counterparts
+  question: LTE core functions and their 5G counterparts?
+  answer: MME -> AMF (mobility). SGW/PGW user plane -> UPF. Session control -> SMF. HSS -> UDM.
+  group: Architecture
+- id: f-interfaces-phone-to-base-station-base-station-to
+  question: "Interfaces: phone to base station, base station to core, base station to base station?"
+  answer: Uu. S1 (LTE) or NG (5G). X2 (LTE) or Xn (NR).
+  group: Architecture
+- id: f-name-the-protocol-layers-from-top-to-bottom-cont
+  question: Name the protocol layers from top to bottom, control plane.
+  answer: NAS, RRC, PDCP, RLC, MAC, PHY.
+  group: Architecture
+- id: f-what-does-each-of-pdcp-rlc-mac-do-in-one-phrase
+  question: What does each of PDCP, RLC, MAC do in one phrase?
+  answer: "PDCP: security and ordering. RLC: segmentation and reliable delivery. MAC: scheduling, HARQ, random access."
+  group: Architecture
+- id: f-srb0-srb1-srb2
+  question: SRB0, SRB1, SRB2?
+  answer: "SRB0: first RRC messages on the common channel. SRB1: RRC, and NAS before security. SRB2: NAS after security."
+  group: Architecture
+- id: f-nsa-versus-sa-in-one-sentence-each
+  question: NSA versus SA in one sentence each.
+  answer: "NSA: LTE anchor plus NR secondary, on the LTE core. SA: NR with the 5G core."
+  group: Architecture
+- id: f-which-channels-carry-dci-uci-the-mib-the-sibs
+  question: Which channels carry DCI, UCI, the MIB, the SIBs?
+  answer: PDCCH, PUCCH (or PUSCH), PBCH, PDSCH.
+  group: Architecture
+- id: f-the-four-kpi-families
+  question: The four KPI families?
+  answer: Accessibility, retainability, mobility, integrity.
+  group: KPIs
+- id: f-how-is-drop-rate-defined
+  question: How is drop rate defined?
+  answer: Abnormal releases divided by all releases.
+  group: KPIs
+- id: f-four-things-that-make-up-downlink-throughput-in-
+  question: Four things that make up downlink throughput in a log?
+  answer: Resource blocks, MCS, rank, and block error rate.
+  group: KPIs
+- id: f-steps-of-a-sound-tuning-experiment
+  question: Steps of a sound tuning experiment?
+  answer: Goal and guard KPIs, fixed conditions, baseline, one change, enough runs, compare distributions, confirm elsewhere, record.
+  group: KPIs
+- id: f-the-debugging-method-in-order
+  question: The debugging method in order?
+  answer: Exact symptom, reproduce, timeline from both sides, last good message, pick the layer, compare with a pass, test one hypothesis, report.
+  group: Method
+- id: f-message-sent-but-not-received-which-way-do-you-g
+  question: "Message sent but not received: which way do you go in the stack? Received and rejected?"
+  answer: "Not received: go down (MAC, PHY, RF). Rejected: go up and read the cause."
+  group: Method
+- id: f-what-belongs-in-a-bug-title
+  question: What belongs in a bug title?
+  answer: What fails, where, how often, on which build. With numbers.
+  group: Method
+- id: f-a-test-passes-alone-and-fails-in-the-suite-first
+  question: A test passes alone and fails in the suite. First suspect?
+  answer: State left behind by an earlier test.
+  group: Method
+- id: f-a-failure-repeats-at-an-exact-interval-what-does
+  question: A failure repeats at an exact interval. What does that suggest?
+  answer: A timer or a scheduled event, not random radio conditions.
+  group: Method
+- id: f-release-17-ntn-what-does-sib19-carry
+  question: "Release 17 NTN: what does SIB19 carry?"
+  answer: Satellite ephemeris, common timing advance, epoch and validity time, K offset, and related settings.
+  group: Satellite
+- id: f-transparent-versus-regenerative-payload
+  question: Transparent versus regenerative payload?
+  answer: "Transparent: satellite repeats, base station on the ground. Regenerative: base station functions on board."
+  group: Satellite
+- id: f-with-unmodified-phones-who-compensates-doppler-a
+  question: With unmodified phones, who compensates Doppler and delay?
+  answer: The network side. The phone only tracks the small leftover error.
+  group: Satellite
+- id: f-why-do-fewer-uplink-resource-blocks-help-at-the-
+  question: Why do fewer uplink resource blocks help at the edge?
+  answer: The same 0.2 W is concentrated in less bandwidth, so the signal per RB is stronger. The cost is data rate.
+  group: Satellite
+- id: f-where-in-a-pass-is-doppler-shift-largest-doppler
+  question: Where in a pass is Doppler shift largest? Doppler rate largest?
+  answer: Shift is largest near the horizon. Rate of change is largest overhead.
+  group: Satellite

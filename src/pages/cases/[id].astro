@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { cases, caseCode, type Case } from '../../lib/data';
+import { u } from '../../lib/url';
+export async function getStaticPaths() {
+  const cs = await cases();
+  return cs.map((c, i) => ({ params: { id: c.id }, props: { c, next: cs[i + 1] ?? null } }));
+}
+interface Props { c: Case; next: Case | null }
+const { c, next } = Astro.props;
+---
+<Base tab="cases" title={c.title}>
+  <div class="back"><a href={u('cases/')}>‹ Case files</a><span>{caseCode(c.order)}</span></div>
+  <span class="eyebrow"><b>{caseCode(c.order)}</b> · {c.tag}</span>
+  <h1 class="h h2">{c.title}</h1>
+  <p style="font-size:17.5px">{c.brief}</p>
+  <p class="note" style="margin-top:10px"><span class="mono" style="color:var(--ink-soft)">TESTBED</span> · {c.setup}</p>
+  <div id="record"></div>
+  <div id="case"></div>
+  <script type="application/json" id="d-case" set:html={JSON.stringify({ c, code: caseCode(c.order), next: next ? { id: next.id, code: caseCode(next.order) } : null })} />
+  <script>import '../../scripts/case';</script>
+</Base>

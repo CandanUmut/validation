@@ -1,0 +1,67 @@
+id: c-forbidden
+order: 1
+title: Attach works, then never again
+tag: Attach
+brief: A phone attaches fine in test 1. In test 7 of the same suite it shows no service on the same cell. Running test 7 alone passes.
+setup: LTE band 25, 5 MHz, one phone in a shield box, automated suite of 12 tests.
+log:
+  - 10:02:11.120 [NAS] UL Attach Request
+  - 10:02:11.480 [NAS] DL Attach Accept
+  - ...
+  - "10:14:40.031 [TEST] test_05 start: reject_handling (network sends cause 11)"
+  - 10:14:41.220 [NAS] UL Attach Request
+  - 10:14:41.515 [NAS] DL Attach Reject cause=11
+  - 10:14:41.520 [NAS] plmn 310-260 added to forbidden list
+  - ...
+  - "10:19:02.004 [TEST] test_07 start: attach_and_data"
+  - 10:19:02.300 [RRC] cell found pci=214 plmn=310-260
+  - 10:19:02.301 [NAS] plmn forbidden, no attach attempt
+  - "10:20:02.010 [TEST] test_07 FAIL: UE not registered after 60s"
+decisions:
+  - question: Test 7 fails in the suite but passes alone. What is your first move?
+    options:
+      - text: Read the log backwards from the failure to the last time attach worked
+        score: 2
+        feedback: Yes. Find the last good state and what happened between then and the failure.
+      - text: "Check the RF path: cables, attenuation, cell power"
+        score: 1
+        feedback: Reasonable habit, but the log already shows the cell was found at 10:19:02. The radio is fine.
+      - text: File a bug against the base station build
+        score: 0
+        feedback: Too early. You have not shown the product did anything wrong.
+  - question: At 10:19:02 the phone finds the cell and then does nothing. Which line explains it?
+    options:
+      - text: "'plmn forbidden, no attach attempt'"
+        score: 2
+        feedback: Right. The phone is obeying a rule it stored earlier.
+      - text: "'cell found pci=214'"
+        score: 0
+        feedback: That line shows the radio works. It does not explain the silence.
+      - text: "'UE not registered after 60s'"
+        score: 0
+        feedback: That is the test noticing the symptom, not the reason.
+  - question: Where did the forbidden entry come from?
+    options:
+      - text: Test 5 sent Attach Reject cause 11 on purpose and never cleaned up
+        score: 2
+        feedback: Yes. Cause 11 (PLMN not allowed) puts the PLMN on the forbidden list until it is cleared.
+      - text: The SIM is faulty
+        score: 0
+        feedback: The SIM attached fine at 10:02.
+      - text: The base station barred the cell
+        score: 0
+        feedback: SIB barring would show as 'cell barred', and the phone would not select the cell at all.
+cause:
+  question: Root cause?
+  options:
+    - "Phone bug: it ignores the cell"
+    - "Test bug: test 5 leaves the PLMN on the phone's forbidden list"
+    - "Base station bug: Attach Accept not sent"
+    - RF leakage in the shield box
+  answer: 1
+  feedback: The phone behaves correctly. The suite leaves hidden state behind. Test 5 needs a teardown that clears the forbidden list (for example an airplane mode cycle or SIM refresh).
+bug: test_05 reject_handling leaves PLMN 310-260 on the UE forbidden list; later attach tests fail (suite only)
+learn:
+  - Some reject causes change what the phone will try next, for a long time.
+  - A test that passes alone and fails in a suite points to leftover state.
+  - Every test must return the phone and the network to a known state.

@@ -1,0 +1,66 @@
+id: c-rach-silent
+order: 2
+title: Preambles into the void
+tag: Random access
+brief: After a parameter change on the cell, phones at the edge of coverage can no longer connect. Phones near the cell are fine.
+setup: LTE 5 MHz. Yesterday someone changed PRACH settings to 'reduce uplink interference'.
+log:
+  - "[RRC] SIB2 prach_cfg=3 target_pwr=-112dBm ramp=0dB preamble_max=4"
+  - "[RRC] cell_select rsrp=-118dBm srxlev=6dB"
+  - "[MAC] Msg1 preamble_id=21 tx_pwr=10dBm attempt=1"
+  - "[MAC] RAR window expired"
+  - "[MAC] Msg1 preamble_id=21 tx_pwr=10dBm attempt=2"
+  - "[MAC] RAR window expired"
+  - "[MAC] Msg1 preamble_id=21 tx_pwr=10dBm attempt=3"
+  - "[MAC] RAR window expired"
+  - "[MAC] Msg1 preamble_id=21 tx_pwr=10dBm attempt=4"
+  - "[MAC] RA failed: max preamble attempts"
+  - "[RRC] T300 expiry"
+decisions:
+  - question: Msg1 is sent four times with no response. What do you want to know first?
+    options:
+      - text: Did the base station detect any preamble at those times?
+        score: 2
+        feedback: "Yes. That splits the problem in two: not heard, or heard and the answer was lost."
+      - text: Is the SIM provisioned?
+        score: 0
+        feedback: The phone has not sent any identity yet. The core is not involved at this stage.
+      - text: Is downlink throughput normal?
+        score: 0
+        feedback: Not relevant before a connection exists.
+  - question: The base station log shows no PRACH detection. Look at the four attempts. What stands out?
+    options:
+      - text: Transmit power is 10 dBm every time
+        score: 2
+        feedback: Right. It never ramps, and it stays far below the phone's 23 dBm maximum.
+      - text: The preamble ID is the same each time
+        score: 1
+        feedback: True, and unusual, but it would not stop detection. The power is the real clue.
+      - text: Only four attempts were made
+        score: 1
+        feedback: That limits the chances, but four attempts at a good level would normally be enough.
+  - question: Which settings explain a flat 10 dBm?
+    options:
+      - text: ramp=0dB and a low target of -112 dBm
+        score: 2
+        feedback: Yes. The low target gives a weak first try, and a zero ramping step means it never gets stronger.
+      - text: prach_cfg=3
+        score: 0
+        feedback: That sets when PRACH occurs, not the power.
+      - text: q-RxLevMin
+        score: 0
+        feedback: That decides camping, not preamble power.
+cause:
+  question: Root cause?
+  options:
+    - "Phone bug: it does not ramp power"
+    - "Configuration: PRACH target power too low and ramping step set to 0"
+    - RF path loss wrongly calibrated
+    - Core network rejects the phone
+  answer: 1
+  feedback: The phone follows SIB2 exactly. With no ramping, edge phones never reach a detectable level. Restore the ramping step and raise the target, then check uplink interference as the guard KPI.
+bug: "RACH fails at cell edge after PRACH change: powerRampingStep=0 dB and target -112 dBm keep preamble at 10 dBm for all attempts"
+learn:
+  - "Preamble power is open loop: target plus path loss, then ramping."
+  - A change that helps one KPI (interference) can break another (access at the edge).
+  - Always check whether the receiver detected anything before blaming the sender.

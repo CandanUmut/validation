@@ -1,0 +1,44 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { modules, lessonsOf, pad2, type Module, type Lesson } from '../../../lib/data';
+import { u } from '../../../lib/url';
+export async function getStaticPaths() {
+  const out: { params: { module: string; lesson: string }; props: { m: Module; l: Lesson; i: number; n: number; next: Lesson | null } }[] = [];
+  for (const m of await modules()) {
+    const ls = await lessonsOf(m.id);
+    ls.forEach((l, i) => out.push({ params: { module: m.id, lesson: l.id }, props: { m, l, i, n: ls.length, next: ls[i + 1] ?? null } }));
+  }
+  return out;
+}
+interface Props { m: Module; l: Lesson; i: number; n: number; next: Lesson | null }
+const { m, l, i, n, next } = Astro.props;
+---
+<Base tab="library" title={l.title}>
+  <div class="back"><a href={u(`library/${m.id}/`)}>‹ {m.title}</a><span>{pad2(i + 1)} / {pad2(n)}</span></div>
+  <span class="eyebrow">Module {pad2(m.order)} · <b>Lesson {pad2(i + 1)}</b></span>
+  <h1 class="h h2">{l.title}</h1>
+  <article class="prose">
+    <ul>{l.points.map((p) => <li set:html={p} />)}</ul>
+  </article>
+  {l.say && <div class="say"><span class="lab">Say it in one breath</span><p set:html={l.say} /></div>}
+  {l.trap && <div class="watch"><span class="lab">Watch out</span><span set:html={l.trap} /></div>}
+  <div class="sec">
+    <div class="sh">Spec trail</div>
+    {l.specs.length ? l.specs.map((s) => (
+      <div class="tr"><span class="s">{s.ref}</span><span class="d">{s.title}{s.release && ` · ${s.release}`}</span><span class={`tag ${s.status === 'checked' ? 'pass' : 'inc'}`}>{s.status === 'checked' ? 'Read' : 'Check'}</span></div>
+    )) : (
+      <div class="msg inc" style="margin-top:0"><span class="lab">Not yet checked against the specs</span>This lesson is from the first version and was written from general knowledge. It will be checked against the 3GPP specs when this module is researched; until then, verify numbers and names before you rely on them.</div>
+    )}
+  </div>
+  <div class="stackb">
+    <button class="btn pri" id="mark" data-id={l.id}>Mark as read</button>
+    {next && <a class="btn quiet" href={u(`library/${m.id}/${next.id}/`)}>Next: {next.title} ›</a>}
+  </div>
+  <script>
+    import { state, save, bump } from '../../../scripts/store';
+    const b = document.getElementById('mark') as HTMLButtonElement, id = b.dataset.id!;
+    const paint = () => { const on = !!state.lessons[id]; b.className = 'btn ' + (on ? 'on' : 'pri'); b.textContent = on ? '✓ Read · tap to undo' : 'Mark as read'; };
+    b.addEventListener('click', () => { if (state.lessons[id]) delete state.lessons[id]; else { state.lessons[id] = 1; bump(2); } save(); paint(); });
+    paint();
+  </script>
+</Base>

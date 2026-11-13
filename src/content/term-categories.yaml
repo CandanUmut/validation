@@ -1,0 +1,20 @@
+- id: arch
+  name: Architecture
+- id: phy
+  name: PHY
+- id: mac
+  name: MAC
+- id: l2
+  name: RLC / PDCP
+- id: rrc
+  name: RRC / NAS
+- id: ntn
+  name: Satellite
+- id: kpi
+  name: KPIs
+- id: lab
+  name: Lab / RF
+- id: test
+  name: Testing
+- id: tool
+  name: Tools

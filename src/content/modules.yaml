@@ -1,0 +1,51 @@
+# Library modules, in order. Lessons live in lessons/<module id>/.
+- id: arch
+  code: ARC
+  order: 1
+  title: Network architecture
+  summary: Who talks to whom, and over which interface.
+- id: phy
+  code: PHY
+  order: 2
+  title: PHY layer
+  summary: OFDM, sync, control and data channels, measurements, link adaptation.
+- id: mac
+  code: MAC
+  order: 3
+  title: MAC layer
+  summary: Random access, scheduling, HARQ, DRX.
+- id: l2
+  code: L2
+  order: 4
+  title: RLC and PDCP
+  summary: Reliability, ordering and security above MAC.
+- id: rrc
+  code: RRC
+  order: 5
+  title: RRC and NAS
+  summary: States, system information, connection setup, mobility, failures.
+- id: ntn
+  code: NTN
+  order: 6
+  title: Satellite RAN and direct-to-cell
+  summary: What changes when the cell tower moves at 7.7 km/s.
+- id: kpi
+  code: KPI
+  order: 7
+  title: KPIs and parameter tuning
+  summary: How RAN performance is measured and improved.
+- id: logs
+  code: LOG
+  order: 8
+  title: Logs and debugging
+  summary: Tools, what to read at each layer, and a method that works.
+- id: test
+  code: TST
+  order: 9
+  title: Test strategy and automation
+  summary: What to test, how to plan it, how to automate it so it can be trusted.
+- id: lab
+  code: LAB
+  order: 10
+  title: Lab and RF
+  summary: dB math, components, and a troubleshooting checklist.

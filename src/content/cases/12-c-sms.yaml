@@ -1,0 +1,64 @@
+id: c-sms
+order: 12
+title: The late text
+tag: Paging
+brief: Text messages over a satellite link sometimes arrive three to four minutes late. Most arrive in seconds.
+setup: Phone in idle, outdoors, partial constellation with gaps between passes.
+log:
+  - 09:10:02 [CORE] SMS for ue A queued
+  - 09:10:02 [CORE] paging attempt 1 tai_list=A1
+  - 09:10:08 [CORE] paging attempt 2
+  - 09:10:20 [CORE] paging attempt 3, no response, retry in 180s
+  - 09:09:40 [UE] no service
+  - 09:12:15 [UE] service restored pci=330
+  - 09:13:20 [CORE] paging attempt 4
+  - 09:13:21 [UE] Paging match, Service Request
+  - 09:13:23 [UE] SMS received
+decisions:
+  - question: The log has timestamps from two sources. What must you check before trusting the order?
+    options:
+      - text: That the phone clock and the core clock are synchronized
+        score: 2
+        feedback: Yes. A timeline built from unsynchronized clocks leads to wrong conclusions. Here they are, so carry on.
+      - text: Nothing, logs are always in order
+        score: 0
+        feedback: Notice the 09:09:40 phone line appears after 09:10:20. Sources are interleaved.
+      - text: The SMS length
+        score: 0
+        feedback: Not relevant to delay of this size.
+  - question: Where was the phone during paging attempts 1 to 3?
+    options:
+      - text: Out of coverage, from 09:09:40 to 09:12:15
+        score: 2
+        feedback: Right. All three pages were sent into a gap.
+      - text: Connected and busy
+        score: 0
+        feedback: The log shows 'no service'.
+      - text: In another tracking area
+        score: 0
+        feedback: Nothing suggests it moved. It simply had no satellite in view.
+  - question: Coverage came back at 09:12:15 but the SMS arrived at 09:13:23. What caused the extra minute?
+    options:
+      - text: "The core's retry timer: it waits 180 s after the third failed page"
+        score: 2
+        feedback: Yes. The phone was reachable for over a minute before anyone tried again.
+      - text: The paging cycle of the phone
+        score: 0
+        feedback: A paging cycle is around a second, not a minute.
+      - text: Slow random access
+        score: 0
+        feedback: Once paged at 09:13:20, the phone answered within a second.
+cause:
+  question: Root cause?
+  options:
+    - Phone missed its paging occasion due to a clock error
+    - Pages sent during a coverage gap, then a fixed 180 s core retry delay after coverage returned
+    - SMS center overload
+    - Wrong tracking area list
+  answer: 1
+  feedback: Nothing failed on the radio. The delay is a design interaction between coverage gaps and the paging retry schedule. A better schedule would page again when coverage is predicted to return.
+bug: "SMS delayed 3 min 21 s: three pages sent during a coverage gap (09:09:40 to 09:12:15); next page only after fixed 180 s retry"
+learn:
+  - Synchronize clocks before a field test, and confirm it in the log.
+  - End-to-end delays often come from retry timers, not from the radio.
+  - Split a delay into its parts and give each part a number.

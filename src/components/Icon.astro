@@ -1,0 +1,16 @@
+---
+/** Line icons drawn in the same pen weight as the traces. */
+interface Props { name: 'today' | 'journey' | 'cases' | 'review' | 'library' | 'search' | 'settings' | 'check' }
+const { name } = Astro.props;
+const P: Record<Props['name'], string> = {
+  today: '<path d="M2.5 13c2.2-7 4.2-7 5.6 0s3.4 7 5.6 0 3.4-7 5.6 0 1.6 3.5 2.2 0"/>',
+  journey: '<path d="M5 3v18M19 3v18M5 8h11l-2.5-2.5M19 15H8l2.5 2.5"/>',
+  cases: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/>',
+  review: '<rect x="3.5" y="7" width="13" height="13.5" rx="2"/><path d="M7.5 3.5h10a3 3 0 0 1 3 3v10"/>',
+  library: '<path d="M4 4.5h4v15H4zM10 4.5h4v15h-4z"/><path d="M15.6 6.3l3.4-.9 3 12.6-3.4.9z"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
+  settings: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+  check: '<path d="M5 12.5l4.2 4.2L19 7"/>',
+};
+---
+<svg viewBox="0 0 24 24" aria-hidden="true" set:html={P[name]} />

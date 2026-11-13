@@ -1,0 +1,63 @@
+id: c-dnn
+order: 11
+title: Registered, no internet
+tag: 5G SA
+brief: A new phone model registers on the 5G standalone network but has no data. Other models work.
+setup: "NR SA, n25. Lab core with one data network configured: 'internet'."
+log:
+  - "[NAS] UL Registration Request"
+  - "[NAS] DL Registration Accept"
+  - "[NAS] UL Registration Complete"
+  - "[NAS] UL PDU Session Establishment Request dnn=ims"
+  - "[NAS] DL PDU Session Establishment Reject cause=27"
+  - "[NAS] UL PDU Session Establishment Request dnn=ims"
+  - "[NAS] DL PDU Session Establishment Reject cause=27"
+  - "[APP] no network connection"
+decisions:
+  - question: Registration completed. Which procedure failed?
+    options:
+      - text: PDU session establishment
+        score: 2
+        feedback: Yes. In 5G the data session is a separate step after registration.
+      - text: Authentication
+        score: 0
+        feedback: Registration was accepted, so authentication passed.
+      - text: Random access
+        score: 0
+        feedback: The phone is connected and exchanging NAS messages.
+  - question: The reject carries cause 27. What does that mean for a session request?
+    options:
+      - text: "Missing or unknown DNN: the core does not know the data network the phone asked for"
+        score: 2
+        feedback: Right. The phone asks for 'ims' and this core only has 'internet'.
+      - text: Congestion
+        score: 0
+        feedback: That is cause 22 at mobility level, or 26 (insufficient resources) at session level.
+      - text: Illegal UE
+        score: 0
+        feedback: That is cause 3, and it would have stopped registration.
+  - question: Is this a phone bug, a network bug or a lab setup gap?
+    options:
+      - text: "A lab setup gap first: this model asks for a data network the test core does not offer. Then check that it also requests 'internet'"
+        score: 2
+        feedback: Yes. Decide by evidence. The fix may be in the lab config or in the phone's profile for this network.
+      - text: A phone bug, because other phones work
+        score: 1
+        feedback: Other phones may simply request 'internet' first. The difference matters, but it does not prove a defect.
+      - text: A base station bug
+        score: 0
+        feedback: The base station only relays these NAS messages.
+cause:
+  question: Root cause?
+  options:
+    - gNB drops the data bearer
+    - Phone requests DNN 'ims' only; the lab core has no such DNN and rejects with cause 27
+    - SIM not provisioned for 5G
+    - Wrong frequency band
+  answer: 1
+  feedback: "Interoperability work is full of this: one model takes a different path. Record exactly what it asked for and what the network offers, then decide where the fix belongs."
+bug: "Model X: registered but no data on SA. PDU session request uses dnn=ims only; core rejects cause 27 (unknown DNN). Other models request dnn=internet"
+learn:
+  - In 5G, 'registered' does not mean 'has data'.
+  - Read the cause value and the requested names before anything else.
+  - One model failing is a difference to explain, not automatically a phone defect.

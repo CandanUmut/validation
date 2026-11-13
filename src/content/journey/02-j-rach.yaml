@@ -1,0 +1,64 @@
+id: j-rach
+order: 2
+title: Random access
+summary: The first uplink. Every connection starts here.
+lanes:
+  - Phone
+  - eNB
+steps:
+  - from: 0
+    to: 0
+    message: "Trigger: upper layers want a connection"
+    layer: MAC
+    what: NAS wants to attach, so RRC asks MAC to start random access. The phone has no uplink timing and no identity in this cell yet.
+    log: "[MAC] RA start cause=connection_request"
+    why: Name four things that can trigger random access.
+    answer: First access from idle, re-establishment, handover, and uplink data when the phone is out of sync or its scheduling requests fail.
+  - from: 0
+    to: 1
+    message: "Msg1: preamble on PRACH"
+    layer: MAC
+    what: The phone picks one of 64 preambles at random and sends it. Power comes from the target level in SIB2 plus its estimate of the path loss.
+    log: "[MAC] Msg1 preamble_id=37 tx_pwr=4dBm attempt=1"
+    why: How does the phone choose its first preamble power?
+    answer: Target received power from SIB2 plus the estimated path loss. It has no feedback yet, so this is open loop.
+  - from: 0
+    to: 0
+    message: "No answer: raise power and send again"
+    layer: MAC
+    what: If no response comes inside the response window, the phone adds the ramping step and tries again, up to the maximum number of attempts.
+    log: "[MAC] RAR window expired, ramp +2dB attempt=2 tx_pwr=6dBm"
+    why: What happens when the phone reaches the maximum number of preamble attempts?
+    answer: MAC reports a random access problem to RRC. During connection setup, T300 will expire. In connected mode this is radio link failure.
+  - from: 1
+    to: 0
+    message: "Msg2: Random Access Response"
+    layer: MAC
+    what: The eNB answers on PDCCH with RA-RNTI. The response carries the timing advance, a small uplink grant, and a temporary C-RNTI.
+    log: "[MAC] Msg2 RAR ra_rnti=0x0005 ta=14 msg3_grant=56bits tc_rnti=0x4A21"
+    why: What three things does the response give the phone?
+    answer: Timing advance, an uplink grant for Msg3, and a temporary C-RNTI.
+  - from: 0
+    to: 1
+    message: "Msg3: RRCConnectionRequest on PUSCH"
+    layer: RRC
+    what: The first scheduled uplink. It carries the phone's identity and the reason for connecting. HARQ is used from here on.
+    log: "[RRC] UL-CCCH RRCConnectionRequest ue_id=s-TMSI cause=mo-Signalling"
+    why: Why is Msg3 a harder transmission than Msg1?
+    answer: It is real data on PUSCH. It needs correct timing advance and enough power to be decoded, while a preamble only has to be detected.
+  - from: 1
+    to: 0
+    message: "Msg4: contention resolution + RRCConnectionSetup"
+    layer: RRC
+    what: The eNB echoes the identity from Msg3. If the phone sees its own identity before the contention timer ends, it has won.
+    log: "[MAC] Msg4 contention resolved  [RRC] DL-CCCH RRCConnectionSetup"
+    why: Why is contention resolution needed at all?
+    answer: Two phones can pick the same preamble. Both get the same response and both send Msg3. The echo of one identity tells them which one was heard.
+  - from: 0
+    to: 0
+    message: C-RNTI confirmed, uplink in sync
+    layer: MAC
+    what: The temporary C-RNTI becomes the phone's C-RNTI. SRB1 is set up. The time alignment timer starts.
+    log: "[MAC] c_rnti=0x4A21 ul_sync=ok ta_timer=running"
+    why: What must happen if the time alignment timer expires later?
+    answer: The phone has lost uplink timing. It must run random access again before it can send anything.

@@ -1,0 +1,68 @@
+id: c-backoff
+order: 9
+title: Fails for exactly twelve minutes
+tag: Attach
+brief: After a core network restart during a test, a phone refuses to attach. An engineer power-cycles the cell and still nothing. Twelve minutes later it attaches by itself.
+setup: LTE lab cell and core. The core was restarted at 14:00:10.
+log:
+  - 14:00:12 [NAS] UL Attach Request (attempt 1)
+  - 14:00:27 [NAS] T3410 expiry
+  - 14:00:37 [NAS] UL Attach Request (attempt 2)
+  - 14:00:52 [NAS] T3410 expiry
+  - ...
+  - 14:01:52 [NAS] UL Attach Request (attempt 5)
+  - 14:02:07 [NAS] T3410 expiry
+  - 14:02:07 [NAS] attempt counter=5, T3402 start
+  - 14:05:00 [TEST] core is back, cell restarted by operator
+  - 14:05:30 [RRC] camped pci=214, no attach attempt
+  - 14:14:07 [NAS] T3402 expiry
+  - 14:14:07 [NAS] UL Attach Request
+  - 14:14:08 [NAS] DL Attach Accept
+decisions:
+  - question: From 14:00 to 14:02 the phone tries five times, 25 seconds apart. Is the phone misbehaving?
+    options:
+      - text: No. That is T3410 (15 s) plus T3411 (10 s), repeated five times, as specified
+        score: 2
+        feedback: Right. The spacing matches the standard timers exactly.
+      - text: Yes, it should retry faster
+        score: 0
+        feedback: The retry timing is defined by the standard.
+      - text: Yes, it should stop after one failure
+        score: 0
+        feedback: Five attempts is the specified behavior.
+  - question: At 14:05 the core is back and the phone is camped, but it does not try. Why?
+    options:
+      - text: "T3402 is running: after five failures the phone waits 12 minutes before it tries again"
+        score: 2
+        feedback: Yes. 14:02:07 plus 12 minutes is 14:14:07, exactly when it attaches.
+      - text: The cell is barred after restart
+        score: 0
+        feedback: The phone camped on it, so it is not barred.
+      - text: The phone crashed
+        score: 0
+        feedback: It attaches by itself later, on a timer.
+  - question: How should the test automation handle this?
+    options:
+      - text: Reset the phone's NAS state (airplane mode cycle) after any core outage, and record that it did so
+        score: 2
+        feedback: Yes. That clears the attempt counter and T3402, and the log shows why.
+      - text: Add a 15-minute sleep to every test
+        score: 0
+        feedback: That wastes hours and hides the state problem.
+      - text: Report it as a phone bug
+        score: 0
+        feedback: The phone follows the specification.
+cause:
+  question: Root cause?
+  options:
+    - Phone firmware hang
+    - "Standard NAS back-off: T3402 (12 min) after five failed attach attempts during the core outage"
+    - Cell misconfigured after restart
+    - SIM blocked
+  answer: 1
+  feedback: Nothing is broken. The lab and the automation need to know about NAS back-off, and recover the phone deliberately after an outage.
+bug: "Not a product bug. Lab note: after core outage, UEs sit in T3402 back-off for 12 min; framework must cycle airplane mode before the next test"
+learn:
+  - Retry patterns with exact spacing are usually timers working as designed.
+  - Know T3410 (15 s), T3411 (10 s) and T3402 (12 min) by heart.
+  - Not every failure is a bug. Saying so, with evidence, is part of the job.

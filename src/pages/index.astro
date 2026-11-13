@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { chapters, cases, modules, lessons } from '../lib/data';
+const ch = (await chapters()).map((c) => ({ id: c.id, title: c.title, order: c.order, steps: c.steps.length }));
+const cs = (await cases()).map((c) => ({ id: c.id, title: c.title, order: c.order, tag: c.tag, n: c.decisions.length }));
+const ls = await lessons();
+const mods = (await modules()).map((m) => ({ id: m.id, code: m.code, title: m.title, lessons: ls.filter((l) => l.module === m.id).map((l) => l.id) }));
+---
+<Base tab="today">
+  <div id="today" class="head"><h1 class="h h1">Today</h1><p class="sub">Loading your plan…</p></div>
+  <script type="application/json" id="d-today" set:html={JSON.stringify({ ch, cs, mods })} />
+  <script>import '../scripts/today';</script>
+</Base>

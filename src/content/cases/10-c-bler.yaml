@@ -1,0 +1,60 @@
+id: c-bler
+order: 10
+title: Good signal, bad blocks
+tag: PHY
+brief: During an emulated satellite pass, block errors climb to 40% in the middle of the pass even though reported signal quality stays good.
+setup: LTE cell, channel emulator replaying delay and Doppler of an overhead pass.
+log:
+  - t=20s  elev=35deg  sinr=11dB  freq_err=+0.4kHz  drift=-60Hz/s   mcs=12  bler=9%
+  - t=40s  elev=62deg  sinr=13dB  freq_err=+1.1kHz  drift=-210Hz/s  mcs=14  bler=24%
+  - t=50s  elev=88deg  sinr=14dB  freq_err=+2.3kHz  drift=-390Hz/s  mcs=14  bler=41%
+  - t=60s  elev=64deg  sinr=13dB  freq_err=+1.2kHz  drift=-220Hz/s  mcs=13  bler=26%
+  - t=80s  elev=36deg  sinr=11dB  freq_err=+0.3kHz  drift=-55Hz/s   mcs=12  bler=10%
+decisions:
+  - question: BLER is worst at t=50 s. What else peaks at that moment?
+    options:
+      - text: Frequency error and its rate of change (drift)
+        score: 2
+        feedback: Yes. Both peak when the satellite is overhead, which is where Doppler changes fastest.
+      - text: Nothing, the SINR is at its best
+        score: 1
+        feedback: SINR is at its best, which is exactly why it cannot be the cause. Look at the other columns.
+      - text: The MCS
+        score: 0
+        feedback: MCS 14 is also used at t=40 s with a lower BLER.
+  - question: Why is the Doppler rate highest at the top of the pass, where the Doppler shift itself is near zero?
+    options:
+      - text: The satellite's motion toward the phone turns into motion away, so the shift changes sign quickly
+        score: 2
+        feedback: Right. The shift crosses zero overhead, and that is where it changes fastest.
+      - text: The satellite speeds up overhead
+        score: 0
+        feedback: Orbital speed is constant. The geometry changes.
+      - text: The path loss is lowest overhead
+        score: 0
+        feedback: True, but that is about signal level, not frequency.
+  - question: A leftover frequency error of 2.3 kHz against 15 kHz subcarriers. What does it do to the signal, and why does the reported SINR not show it?
+    options:
+      - text: It causes interference between subcarriers. An averaged SINR measured on reference signals can miss it
+        score: 2
+        feedback: Yes. Always ask whether a quality number is measured on the same thing, at the same time, as the data.
+      - text: It lowers the received power
+        score: 0
+        feedback: Power is unchanged. The damage is to orthogonality.
+      - text: It delays the HARQ feedback
+        score: 0
+        feedback: Frequency error does not change timing.
+cause:
+  question: Root cause?
+  options:
+    - Too little transmit power overhead
+    - Doppler pre-compensation does not follow the fast Doppler change near the top of the pass, leaving a large residual offset
+    - Wrong TDD pattern
+    - RLC timer too short
+  answer: 1
+  feedback: "The compensation has to update fast enough for the highest Doppler rate, not only for the largest shift. The test to add: BLER against Doppler rate, across the whole pass."
+bug: "BLER 41% at max elevation despite SINR 14 dB: residual frequency error 2.3 kHz when Doppler rate peaks (-390 Hz/s); pre-compensation update too slow"
+learn:
+  - Find which column moves together with the symptom.
+  - An average quality number can hide short or structured impairments.
+  - On a satellite pass, Doppler shift and Doppler rate peak at different moments.
