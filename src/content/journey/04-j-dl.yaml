@@ -3,78 +3,78 @@ order: 4
 title: Downlink data
 summary: How one block of data gets to the phone, and what happens when it fails.
 lanes:
-  - Phone
-  - eNB
+- Phone
+- eNB
 steps:
-  - from: 0
-    to: 1
-    message: "Channel report: CQI, RI, PMI"
-    layer: PHY
-    what: The phone measures the downlink and reports how good it is, how many layers it can take, and which precoder it prefers.
-    log: "[PHY] CSI report cqi=9 ri=1"
-    why: What does CQI stand for in practice?
-    answer: The highest modulation and coding the phone thinks it can receive at about 10% block error.
-  - from: 1
-    to: 1
-    message: Scheduler picks RBs and MCS
-    layer: MAC
-    what: Every subframe the scheduler decides who gets which resource blocks, and with which MCS, from the CQI and the buffer.
-    log: "[MAC] sched dl rnti=0x4A21 rb=20 mcs=14"
-    why: Name two things besides CQI that the scheduler looks at.
-    answer: How much data is waiting for each phone, and fairness or priority between phones (plus HARQ retransmissions waiting).
-  - from: 1
-    to: 0
-    message: DCI on PDCCH (downlink assignment)
-    layer: PHY
-    what: The control message says where the data is, its MCS, the HARQ process, and whether it is new data.
-    log: "[PHY] DCI 1A rnti=0x4A21 rb=20 mcs=14 harq=3 ndi=1 rv=0"
-    why: If the phone misses this DCI, what does the eNB see?
-    answer: Nothing. No ACK and no NACK, which is called DTX.
-  - from: 1
-    to: 0
-    message: Data on PDSCH
-    layer: PHY
-    what: The transport block is sent in the same subframe as its DCI.
-    log: "[PHY] PDSCH tbs=5736bits"
-    why: What three settings decide how many bits one transport block carries?
-    answer: The MCS, the number of resource blocks, and the number of layers.
-  - from: 0
-    to: 0
-    message: Decode and CRC check
-    layer: PHY
-    what: The phone demodulates, decodes and checks the CRC. If it fails, it keeps the soft bits for combining.
-    log: "[PHY] PDSCH decode harq=3 crc=fail"
-    why: Why does the phone keep a failed block?
-    answer: To combine it with the retransmission. That soft combining is what makes HARQ efficient.
-  - from: 0
-    to: 1
-    message: HARQ ACK or NACK on PUCCH
-    layer: MAC
-    what: In LTE FDD the answer goes back exactly 4 subframes after the data.
-    log: "[MAC] HARQ feedback harq=3 nack"
-    why: What does this fixed 4 ms timing assume?
-    answer: That the round trip between phone and base station is very short. A long path needs the timing to be shifted or relaxed.
-  - from: 1
-    to: 0
-    message: "Retransmission: same process, new redundancy version"
-    layer: MAC
-    what: The eNB sends the block again with different parity bits. NDI is not toggled, so the phone knows it is a retransmission.
-    log: "[PHY] DCI 1A harq=3 ndi=1 rv=2  [PHY] decode crc=ok (combined)"
-    why: How does the phone know a block is a retransmission?
-    answer: The new data indicator (NDI) for that HARQ process is unchanged.
-  - from: 1
-    to: 1
-    message: Outer loop adjusts the MCS
-    layer: MAC
-    what: After a NACK the eNB steps the MCS down a little. After ACKs it steps it up slowly. This holds the block error rate near 10%.
-    log: "[MAC] olla offset=-0.5dB next_mcs=13"
-    why: Why not aim for 0% block errors?
-    answer: HARQ makes a failed first try cheap. Running a little too fast and repairing 1 in 10 gives more throughput than playing safe.
-  - from: 0
-    to: 1
-    message: RLC status report
-    layer: RLC
-    what: In acknowledged mode the phone reports which RLC PDUs arrived. Anything HARQ lost for good is sent again by RLC.
-    log: "[RLC] STATUS ack_sn=418 nack_sn=none"
-    why: What happens if one RLC PDU reaches its maximum retransmissions?
-    answer: RLC tells RRC, and RRC declares radio link failure.
+- from: 0
+  to: 1
+  message: 'Channel report: CQI, RI, PMI'
+  layer: PHY
+  what: The phone measures the downlink and reports how good it is, how many layers it can take, and which precoder it prefers.
+  log: '[PHY] CSI report cqi=9 ri=1'
+  why: What does CQI stand for in practice?
+  answer: The highest modulation and coding the phone thinks it can receive at about 10% block error.
+- from: 1
+  to: 1
+  message: Scheduler picks RBs and MCS
+  layer: MAC
+  what: Every subframe the scheduler decides who gets which resource blocks, and with which MCS, from the CQI and the buffer.
+  log: '[MAC] sched dl rnti=0x4A21 rb=20 mcs=14'
+  why: Name two things besides CQI that the scheduler looks at.
+  answer: How much data is waiting for each phone, and fairness or priority between phones (plus HARQ retransmissions waiting).
+- from: 1
+  to: 0
+  message: DCI on PDCCH (downlink assignment)
+  layer: PHY
+  what: The control message says where the data is, its MCS, the HARQ process, and whether it is new data.
+  log: '[PHY] DCI 1A rnti=0x4A21 rb=20 mcs=14 harq=3 ndi=1 rv=0'
+  why: If the phone misses this DCI, what does the eNB see?
+  answer: Nothing. No ACK and no NACK, which is called DTX.
+- from: 1
+  to: 0
+  message: Data on PDSCH
+  layer: PHY
+  what: The transport block is sent in the same subframe as its DCI.
+  log: '[PHY] PDSCH tbs=5736bits'
+  why: What three settings decide how many bits one transport block carries?
+  answer: The MCS, the number of resource blocks, and the number of layers.
+- from: 0
+  to: 0
+  message: Decode and CRC check
+  layer: PHY
+  what: The phone demodulates, decodes and checks the CRC. If it fails, it keeps the soft bits for combining.
+  log: '[PHY] PDSCH decode harq=3 crc=fail'
+  why: Why does the phone keep a failed block?
+  answer: To combine it with the retransmission. That soft combining is what makes HARQ efficient.
+- from: 0
+  to: 1
+  message: HARQ ACK or NACK on PUCCH
+  layer: MAC
+  what: In LTE FDD the answer goes back exactly 4 subframes after the data.
+  log: '[MAC] HARQ feedback harq=3 nack'
+  why: What does this fixed 4 ms timing assume?
+  answer: That the round trip between phone and base station is very short. A long path needs the timing to be shifted or relaxed.
+- from: 1
+  to: 0
+  message: 'Retransmission: same process, new redundancy version'
+  layer: MAC
+  what: The eNB sends the block again with different parity bits. NDI is not toggled, so the phone knows it is a retransmission.
+  log: '[PHY] DCI 1A harq=3 ndi=1 rv=2  [PHY] decode crc=ok (combined)'
+  why: How does the phone know a block is a retransmission?
+  answer: The new data indicator (NDI) for that HARQ process is unchanged.
+- from: 1
+  to: 1
+  message: Outer loop adjusts the MCS
+  layer: MAC
+  what: In practice the eNB's outer loop (vendor implementation, not specified by 3GPP) steps the MCS down after a NACK and up slowly after ACKs, usually holding first-transmission block errors near 10%, the level CQI is defined at.
+  log: '[MAC] olla offset=-0.5dB next_mcs=13'
+  why: Why not aim for 0% block errors?
+  answer: HARQ makes a failed first try cheap. Running a little too fast and repairing 1 in 10 gives more throughput than playing safe.
+- from: 0
+  to: 1
+  message: RLC status report
+  layer: RLC
+  what: In acknowledged mode the phone reports which RLC PDUs arrived. Anything HARQ lost for good is sent again by RLC.
+  log: '[RLC] STATUS ack_sn=418 nack_sn=none'
+  why: What happens if one RLC PDU reaches its maximum retransmissions?
+  answer: RLC tells RRC, and RRC declares radio link failure.

@@ -3,78 +3,78 @@ order: 8
 title: Link failure and recovery
 summary: What the phone does when the link dies, step by step.
 lanes:
-  - Phone
-  - Cell
+- Phone
+- Cell
 steps:
-  - from: 0
-    to: 0
-    message: "Control channel quality falls: out-of-sync"
-    layer: PHY
-    what: The physical layer estimates it could no longer decode PDCCH reliably and reports 'out-of-sync' to RRC.
-    log: "[PHY] rlm out_of_sync sinr=-9dB"
-    why: What is radio link monitoring actually judging?
-    answer: Whether the phone could still decode the control channel (PDCCH) at an acceptable error rate.
-  - from: 0
-    to: 0
-    message: "N310 in a row: T310 starts"
-    layer: RRC
-    what: After N310 consecutive out-of-sync indications, the phone starts T310 and hopes the link comes back.
-    log: "[RRC] n310=6 reached, T310 start 1000ms"
-    why: What stops T310 before it expires?
-    answer: N311 consecutive in-sync indications.
-  - from: 0
-    to: 0
-    message: "T310 expires: radio link failure"
-    layer: RRC
-    what: The link is declared dead. The phone stops transmitting on it.
-    log: "[RRC] T310 expiry RLF cause=t310"
-    why: Name the other triggers of radio link failure.
-    answer: Random access failure, RLC reaching maximum retransmissions, and handover failure (T304).
-  - from: 0
-    to: 0
-    message: "T311 starts: look for a cell"
-    layer: RRC
-    what: The phone searches for any suitable cell. It may be the same one.
-    log: "[RRC] T311 start, cell selection  found pci=37"
-    why: What happens if T311 expires with no cell found?
-    answer: The phone goes to idle. Recovery is then up to NAS.
-  - from: 0
-    to: 1
-    message: Random access
-    layer: MAC
-    what: Contention-based, like a first access.
-    log: "[MAC] RA start cause=reestablishment"
-    why: Why contention-based here?
-    answer: The network did not plan this. Nobody has assigned the phone a dedicated preamble.
-  - from: 0
-    to: 1
-    message: RRCConnectionReestablishmentRequest
-    layer: RRC
-    what: Carries the phone's old identity and cell, a short security token, and the cause.
-    log: "[RRC] UL-CCCH RRCConnectionReestablishmentRequest c_rnti=0x4A21 pci=214 cause=otherFailure"
-    why: What are the three re-establishment causes?
-    answer: otherFailure, handoverFailure, and reconfigurationFailure.
-  - from: 1
-    to: 0
-    message: RRCConnectionReestablishment
-    layer: RRC
-    what: The cell found the phone's context (its own, or fetched from the old cell) and accepts.
-    log: "[RRC] DL-CCCH RRCConnectionReestablishment"
-    why: What two conditions must hold for re-establishment to work?
-    answer: Security was already active, and the cell has or can fetch the phone's context.
-  - from: 0
-    to: 1
-    message: ReestablishmentComplete, then reconfiguration
-    layer: RRC
-    what: SRB1 resumes. A reconfiguration brings back SRB2 and the data bearers. The user saw a short gap.
-    log: "[RRC] RRCConnectionReestablishmentComplete  RRCConnectionReconfiguration drb1 resumed"
-    why: Why count re-established drops separately from full drops?
-    answer: "The user experience differs: a short stall versus a lost session and a new setup."
-  - from: 1
-    to: 0
-    message: "Or: reject, back to idle"
-    layer: RRC
-    what: If the cell has no context, it rejects. The phone goes to idle and NAS starts a new connection.
-    log: "[RRC] RRCConnectionReestablishmentReject  state=IDLE  [NAS] Service Request"
-    why: A cell keeps rejecting re-establishments after handover failures. What is likely missing?
-    answer: The phone's context. The cell was never prepared, and it could not fetch the context from the old cell.
+- from: 0
+  to: 0
+  message: 'Control channel quality falls: out-of-sync'
+  layer: PHY
+  what: The physical layer estimates it could no longer decode PDCCH reliably and reports 'out-of-sync' to RRC.
+  log: '[PHY] rlm out_of_sync sinr=-9dB'
+  why: What is radio link monitoring actually judging?
+  answer: Whether the phone could still decode the control channel (PDCCH) at an acceptable error rate.
+- from: 0
+  to: 0
+  message: 'N310 in a row: T310 starts'
+  layer: RRC
+  what: After N310 consecutive out-of-sync indications, the phone starts T310 and hopes the link comes back.
+  log: '[RRC] n310=6 reached, T310 start 1000ms'
+  why: What stops T310 before it expires?
+  answer: N311 consecutive in-sync indications.
+- from: 0
+  to: 0
+  message: 'T310 expires: radio link failure'
+  layer: RRC
+  what: The link is declared dead. The phone stops transmitting on it.
+  log: '[RRC] T310 expiry RLF cause=t310'
+  why: Name the other triggers of radio link failure.
+  answer: 'In LTE: T312 expiry (when configured), a random access problem while no setup or handover timer runs, and RLC reaching maximum retransmissions. Handover failure (T304 expiry) is a separate path that also leads to re-establishment.'
+- from: 0
+  to: 0
+  message: 'T311 starts: look for a cell'
+  layer: RRC
+  what: The phone searches for any suitable cell. It may be the same one.
+  log: '[RRC] T311 start, cell selection  found pci=37'
+  why: What happens if T311 expires with no cell found?
+  answer: The phone goes to idle. Recovery is then up to NAS.
+- from: 0
+  to: 1
+  message: Random access
+  layer: MAC
+  what: Contention-based, like a first access.
+  log: '[MAC] RA start cause=reestablishment'
+  why: Why contention-based here?
+  answer: The network did not plan this. Nobody has assigned the phone a dedicated preamble.
+- from: 0
+  to: 1
+  message: RRCConnectionReestablishmentRequest
+  layer: RRC
+  what: Carries the phone's old identity and cell, a short security token, and the cause.
+  log: '[RRC] UL-CCCH RRCConnectionReestablishmentRequest c_rnti=0x4A21 pci=214 cause=otherFailure'
+  why: What are the three re-establishment causes?
+  answer: otherFailure, handoverFailure, and reconfigurationFailure.
+- from: 1
+  to: 0
+  message: RRCConnectionReestablishment
+  layer: RRC
+  what: The cell found the phone's context (its own, or fetched from the old cell) and accepts.
+  log: '[RRC] DL-CCCH RRCConnectionReestablishment'
+  why: What two conditions must hold for re-establishment to work?
+  answer: Security was already active, and the cell has or can fetch the phone's context.
+- from: 0
+  to: 1
+  message: ReestablishmentComplete, then reconfiguration
+  layer: RRC
+  what: SRB1 resumes. A reconfiguration brings back SRB2 and the data bearers. The user saw a short gap.
+  log: '[RRC] RRCConnectionReestablishmentComplete  RRCConnectionReconfiguration drb1 resumed'
+  why: Why count re-established drops separately from full drops?
+  answer: 'The user experience differs: a short stall versus a lost session and a new setup.'
+- from: 1
+  to: 0
+  message: 'Or: reject, back to idle'
+  layer: RRC
+  what: If the cell has no context, it rejects. The phone goes to idle and NAS starts a new connection.
+  log: '[RRC] RRCConnectionReestablishmentReject  state=IDLE  [NAS] Service Request'
+  why: A cell keeps rejecting re-establishments after handover failures. What is likely missing?
+  answer: The phone's context. The cell was never prepared, and it could not fetch the context from the old cell.

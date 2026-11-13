@@ -3,95 +3,95 @@ order: 3
 title: RRC setup and attach
 summary: Now the phone can talk to the core.
 lanes:
-  - Phone
-  - eNB
-  - MME
+- Phone
+- eNB
+- MME
 steps:
-  - from: 0
-    to: 1
-    message: RRCConnectionSetupComplete [Attach Request]
-    layer: RRC
-    what: "The phone confirms the RRC connection and puts its first NAS message inside: Attach Request, with a PDN Connectivity Request."
-    log: "[RRC] UL-DCCH RRCConnectionSetupComplete  [NAS] Attach Request + PDN Connectivity Request"
-    why: Where does the Attach Request travel?
-    answer: Inside RRCConnectionSetupComplete, on SRB1. The eNB does not read it. It forwards it to the MME.
-  - from: 1
-    to: 2
-    message: S1AP Initial UE Message
-    layer: S1AP
-    what: The eNB passes the NAS message to the MME and opens a signaling connection for this phone.
-    log: "[S1AP] InitialUEMessage enb_ue_id=112 tai=310-260-1A2B"
-    why: If the phone sent Attach Request but the MME never saw it, where do you look?
-    answer: "Between eNB and MME: the S1 link, the Initial UE Message, and whether the eNB forwarded it at all."
-  - from: 2
-    to: 0
-    message: Authentication Request
-    layer: NAS
-    what: The MME sends a random number and a network token. The SIM checks the token, so the phone knows the network is real.
-    log: "[NAS] DL Authentication Request rand=.. autn=.."
-    why: What does AKA prove, and to whom?
-    answer: Both sides. The SIM checks AUTN to verify the network. The network checks RES to verify the SIM.
-  - from: 0
-    to: 2
-    message: Authentication Response
-    layer: NAS
-    what: The SIM computes the answer. Both sides now derive the same keys.
-    log: "[NAS] UL Authentication Response res=.."
-    why: What two failures can the phone report here?
-    answer: MAC failure (the token did not verify) or synch failure (sequence number out of range, with a resync token).
-  - from: 2
-    to: 0
-    message: NAS Security Mode Command / Complete
-    layer: NAS
-    what: The MME chooses the ciphering and integrity algorithms for NAS. From here NAS messages are protected.
-    log: "[NAS] Security Mode Command eea=2 eia=2  /  Security Mode Complete"
-    why: There are two Security Mode Commands in an attach. What is the difference?
-    answer: One is NAS (phone to MME). The other is RRC (phone to eNB) and protects the radio bearers.
-  - from: 2
-    to: 1
-    message: Initial Context Setup Request [Attach Accept]
-    layer: S1AP
-    what: "The MME tells the eNB to set up the phone's context: security key, capabilities, and the default bearer. The Attach Accept rides inside."
-    log: "[S1AP] InitialContextSetupRequest erab_id=5 qci=9"
-    why: What does the eNB learn from this message that it did not know before?
-    answer: The security key for the radio, the bearer to set up with its QoS, and usually the phone's capabilities.
-  - from: 1
-    to: 0
-    message: RRC SecurityModeCommand / Complete
-    layer: RRC
-    what: Radio-level ciphering and integrity start. Signaling on SRB1 is now protected.
-    log: "[RRC] DL-DCCH SecurityModeCommand  /  UL-DCCH SecurityModeComplete"
-    why: What symptom would an algorithm mismatch give here?
-    answer: SecurityModeFailure, or integrity check failures right after. The procedure stops before any bearer is set up.
-  - from: 1
-    to: 0
-    message: UECapabilityEnquiry / Information
-    layer: RRC
-    what: The eNB asks which bands, features and categories the phone supports, if the core did not already supply them.
-    log: "[RRC] UECapabilityEnquiry  /  UECapabilityInformation cat=4 bands=2,4,12,25,66"
-    why: Why can one phone model fail where others pass, with the same network settings?
-    answer: Its capabilities differ, so the network configures it differently and takes a different code path.
-  - from: 1
-    to: 0
-    message: RRCConnectionReconfiguration [Attach Accept + default bearer]
-    layer: RRC
-    what: Sets up SRB2 and the default data bearer, and carries Attach Accept with the Activate Default EPS Bearer request.
-    log: "[RRC] DL-DCCH RRCConnectionReconfiguration srb2 drb1  [NAS] Attach Accept"
-    why: What does this one RRC message set up?
-    answer: SRB2, the default data radio bearer, and often the measurement configuration. It also delivers Attach Accept.
-  - from: 0
-    to: 1
-    message: RRCConnectionReconfigurationComplete
-    layer: RRC
-    what: The phone confirms the radio bearers are in place.
-    log: "[RRC] UL-DCCH RRCConnectionReconfigurationComplete"
-    why: The reconfiguration was sent but Complete never arrived. Name two likely reasons.
-    answer: The phone did not receive it (downlink problem), or it rejected the configuration and started re-establishment.
-  - from: 0
-    to: 2
-    message: Attach Complete
-    layer: NAS
-    what: The phone accepts the default bearer. T3410 stops. The phone has an IP address and data can flow.
-    log: "[NAS] UL Attach Complete + Activate Default EPS Bearer Context Accept"
-    why: Which timer guards the whole attach on the phone, and how long is it?
-    answer: T3410, 15 seconds. If it expires the phone retries after T3411 (10 seconds), up to five times.
+- from: 0
+  to: 1
+  message: RRCConnectionSetupComplete [Attach Request]
+  layer: RRC
+  what: 'The phone confirms the RRC connection and puts its first NAS message inside: Attach Request, with a PDN Connectivity Request.'
+  log: '[RRC] UL-DCCH RRCConnectionSetupComplete  [NAS] Attach Request + PDN Connectivity Request'
+  why: Where does the Attach Request travel?
+  answer: Inside RRCConnectionSetupComplete, on SRB1. The eNB does not read it. It forwards it to the MME.
+- from: 1
+  to: 2
+  message: S1AP Initial UE Message
+  layer: S1AP
+  what: The eNB passes the NAS message to the MME and opens a signaling connection for this phone.
+  log: '[S1AP] InitialUEMessage enb_ue_id=112 tai=310-260-1A2B'
+  why: If the phone sent Attach Request but the MME never saw it, where do you look?
+  answer: 'Between eNB and MME: the S1 link, the Initial UE Message, and whether the eNB forwarded it at all.'
+- from: 2
+  to: 0
+  message: Authentication Request
+  layer: NAS
+  what: The MME sends a random number and a network token. The SIM checks the token, so the phone knows the network is real.
+  log: '[NAS] DL Authentication Request rand=.. autn=..'
+  why: What does AKA prove, and to whom?
+  answer: Both sides. The SIM checks AUTN to verify the network. The network checks RES to verify the SIM.
+- from: 0
+  to: 2
+  message: Authentication Response
+  layer: NAS
+  what: The SIM computes the answer. Both sides now derive the same keys.
+  log: '[NAS] UL Authentication Response res=..'
+  why: What two failures can the phone report here?
+  answer: MAC failure (the token did not verify) or synch failure (sequence number out of range, with a resync token).
+- from: 2
+  to: 0
+  message: NAS Security Mode Command / Complete
+  layer: NAS
+  what: The MME chooses the ciphering and integrity algorithms for NAS. From here NAS messages are protected.
+  log: '[NAS] Security Mode Command eea=2 eia=2  /  Security Mode Complete'
+  why: There are two Security Mode Commands in an attach. What is the difference?
+  answer: One is NAS (phone to MME). The other is RRC (phone to eNB) and protects the radio bearers.
+- from: 2
+  to: 1
+  message: Initial Context Setup Request [Attach Accept]
+  layer: S1AP
+  what: 'The MME tells the eNB to set up the phone''s context: security key, capabilities, and the default bearer. The Attach Accept rides inside.'
+  log: '[S1AP] InitialContextSetupRequest erab_id=5 qci=9'
+  why: What does the eNB learn from this message that it did not know before?
+  answer: The security key for the radio, the bearer to set up with its QoS, and usually the phone's capabilities.
+- from: 1
+  to: 0
+  message: RRC SecurityModeCommand / Complete
+  layer: RRC
+  what: Radio-level ciphering and integrity start. Signaling on SRB1 is now protected.
+  log: '[RRC] DL-DCCH SecurityModeCommand  /  UL-DCCH SecurityModeComplete'
+  why: What symptom would an algorithm mismatch give here?
+  answer: SecurityModeFailure, or integrity check failures right after. The procedure stops before any bearer is set up.
+- from: 1
+  to: 0
+  message: UECapabilityEnquiry / Information
+  layer: RRC
+  what: The eNB asks which bands, features and categories the phone supports, if the core did not already supply them.
+  log: '[RRC] UECapabilityEnquiry  /  UECapabilityInformation cat=4 bands=2,4,12,25,66'
+  why: Why can one phone model fail where others pass, with the same network settings?
+  answer: Its capabilities differ, so the network configures it differently and takes a different code path.
+- from: 1
+  to: 0
+  message: RRCConnectionReconfiguration [Attach Accept + default bearer]
+  layer: RRC
+  what: Sets up SRB2 and the default data bearer, and carries Attach Accept with the Activate Default EPS Bearer request.
+  log: '[RRC] DL-DCCH RRCConnectionReconfiguration srb2 drb1  [NAS] Attach Accept'
+  why: What does this one RRC message set up?
+  answer: SRB2, the default data radio bearer, and often the measurement configuration. It also delivers Attach Accept.
+- from: 0
+  to: 1
+  message: RRCConnectionReconfigurationComplete
+  layer: RRC
+  what: The phone confirms the radio bearers are in place.
+  log: '[RRC] UL-DCCH RRCConnectionReconfigurationComplete'
+  why: The reconfiguration was sent but Complete never arrived. Name two likely reasons.
+  answer: The phone did not receive it (downlink problem), or it rejected the configuration and started re-establishment.
+- from: 0
+  to: 2
+  message: Attach Complete
+  layer: NAS
+  what: The phone accepts the default bearer and confirms the attach. (T3410 already stopped when Attach Accept arrived.) The phone has an IP address and data can flow.
+  log: '[NAS] UL Attach Complete + Activate Default EPS Bearer Context Accept'
+  why: Which timer guards the whole attach on the phone, and how long is it?
+  answer: T3410, 15 seconds. If it expires the phone retries after T3411 (10 seconds), up to five times.
