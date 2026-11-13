@@ -15,9 +15,20 @@ A small web app for daily practice in LTE and 5G RAN validation. It installs to 
 | **Review** | Answer cards out loud and grade yourself. Missed cards come back tomorrow. Known cards come back after 2, 4, 8, 16 days and on | Spaced recall keeps what you learned |
 | **Library** | 59 short lessons and 186 terms | Reference for when a step does not make sense yet |
 
+## Built for daily use
+
+- **Today's test plan.** Three numbered test cases (review, one journey pass, one case), each stamped PASS when you execute it.
+- **Link status.** Uptime (days in a row), retained cards, throughput, and **review BLER**: your first-try miss rate over 7 days. A radio link aims for about 10% block errors; spaced practice works best near the same number. Under 5% means you can take more new cards per day. Over 15% means slow down.
+- **Drive log and forecast.** An 18-week activity heatmap and the number of cards due over the next 14 days.
+- **Weak signals.** The cards you miss most, in one place.
+- **Protocol layers in colour.** PHY, MAC, RLC, RRC, NAS and S1AP/X2AP are colour-coded in the ladder diagrams, the step cards and the log viewer.
+- **Search everything.** Press `/` (or Ctrl/Cmd + K) to search terms, lessons, journey steps, cases and facts.
+- **Keyboard.** `1`–`9` picks an option or grades a card, `Space` shows the answer, `Enter` continues, `T J C R L` switch tabs.
+- **Case log viewer.** Line numbers, layer tags, and tap-to-mark lines as evidence. On purpose it does not colour clue words like "reject" or "expired": spotting them is the exercise.
+
 ## Things to know
 
-- **Progress stays on your device.** It is kept in the browser's local storage. Use *Settings and backup* on the Today tab to export a file and import it elsewhere.
+- **Progress stays on your device.** It is kept in the browser's local storage. Use *Settings & backup* (the sliders icon) to export a file and import it elsewhere. Progress from the earlier version carries over; the activity history and BLER start counting from your first review in this version.
 - **Log lines are simplified.** They were written for teaching. They are not output from any real tool.
 - **Check details before you rely on them.** Timer values, cause numbers and spec references were written from general knowledge of the 3GPP standards. Verify against the specifications for anything that matters.
 - **The satellite chapter is reasoning.** It works from physics and public information, not from any vendor's design.
