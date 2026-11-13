@@ -51,7 +51,7 @@ async function render() {
   }
   const mods = d.mods.map((m) => ({ code: m.code, title: m.title, frac: m.lessons.filter((id) => state.lessons[id]).length / m.lessons.length }));
   h += `<div class="sec"><div class="sh">Coverage · ${mods.length} modules</div><a href="${B}library/" aria-label="Open the library">${spectrum(mods)}</a><p class="note" style="margin-top:6px">Band height is the share of each module's lessons you have read. Dotted bands are not started.</p></div>`;
-  h += '<p class="foot">Logs in this app are simplified teaching logs, not output from a real tool. Every lesson is checked against the 3GPP specs or marked as practice; journey steps, cases and review cards are being checked next.</p>';
+  h += '<p class="foot">Logs in this app are simplified teaching logs, not output from a real tool. All lessons, journey steps, cases and review cards have been checked against the 3GPP specs (Release 17) or marked as practice.</p>';
   $('#today')!.innerHTML = h;
 }
 render();

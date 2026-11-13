@@ -12,7 +12,8 @@
 | R2 | PHY module | **Done**: 10 lessons rewritten from TS 38.211–38.215, 38.321, 38.306, 38.101-1, 36.211–36.214, 36.306 (Rel-17); 2 gaps added |
 | R3 | MAC and RLC/PDCP modules | **Done**: 8 lessons rewritten (TS 38.321, 38.322, 38.323, 37.324, 38.300 …) |
 | R4 | Remaining modules: arch, ntn, kpi, logs, test, lab | **Done**: all 59 lessons now `research` (41) or `practice` (18) |
-| R5 | Journey steps, cases, facts and terms | Next |
+| R5 | Journey steps, cases, facts and terms | **Done**: 93 steps (9 changed), 12 cases (spec facts checked, 1 corrected), 49 facts (16 corrected), 186 terms (16 corrected) |
+| R6 | Content expansion to the 16-module plan (new research-written lessons, chapters and cases) | Next |
 | 4+ | Content, module by module, in the order in `CONTENT_PLAN.md` §4. One PR per module | Not started |
 
 Each phase ends with phone-size screenshots, test results and a PR.

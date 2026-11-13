@@ -18,11 +18,11 @@
 - id: t-epc
   term: EPC
   category: arch
-  meaning: "LTE core network: MME, SGW, PGW, HSS."
+  meaning: 'LTE core network: MME, SGW, PGW, HSS.'
 - id: t-5gc
   term: 5GC
   category: arch
-  meaning: "5G core network: AMF, SMF, UPF and others."
+  meaning: '5G core network: AMF, SMF, UPF and others.'
 - id: t-mme
   term: MME
   category: arch
@@ -58,11 +58,11 @@
 - id: t-cu-du-ru
   term: CU / DU / RU
   category: arch
-  meaning: Split of a gNB into central unit, distributed unit and radio unit.
+  meaning: 3GPP splits a gNB into a central unit (RRC, SDAP, PDCP) and a distributed unit (RLC, MAC, PHY) over F1. The radio unit (lower PHY) split is O-RAN's, not 3GPP's.
 - id: t-plmn
   term: PLMN
   category: arch
-  meaning: "Network identity: country code (MCC) plus network code (MNC)."
+  meaning: 'Network identity: country code (MCC) plus network code (MNC).'
 - id: t-tac
   term: TAC
   category: arch
@@ -94,7 +94,7 @@
 - id: t-scs
   term: SCS
   category: phy
-  meaning: Subcarrier spacing. 15 kHz in LTE. 15, 30, 60 or 120 kHz in NR.
+  meaning: 'Subcarrier spacing. 15 kHz in LTE. NR: 15 × 2^μ kHz; FR1 uses 15, 30 or 60 kHz; Release 17 defines up to 960 kHz.'
 - id: t-rb-prb
   term: RB / PRB
   category: phy
@@ -110,7 +110,7 @@
 - id: t-fr1-fr2
   term: FR1 / FR2
   category: phy
-  meaning: NR frequency ranges. FR1 is below 7.125 GHz. FR2 is mmWave.
+  meaning: 'NR frequency ranges. FR1: 410 MHz to 7.125 GHz. FR2-1: 24.25 to 52.6 GHz. FR2-2: 52.6 to 71 GHz.'
 - id: t-fdd-tdd
   term: FDD / TDD
   category: phy
@@ -194,7 +194,7 @@
 - id: t-bler
   term: BLER
   category: phy
-  meaning: Block error rate. Failed first transmissions over all first transmissions. Target is about 10%.
+  meaning: Block error rate. Failed first transmissions over all first transmissions. CQI is defined at 10%, so schedulers usually aim near it.
 - id: t-tbs
   term: TBS
   category: phy
@@ -202,7 +202,7 @@
 - id: t-ldpc-polar
   term: LDPC / Polar
   category: phy
-  meaning: NR channel codes. LDPC for data, polar for control.
+  meaning: NR channel codes. LDPC for data channels and paging; polar for BCH and DCI, and for most uplink control (small payloads use a block code).
 - id: t-cfo
   term: CFO
   category: phy
@@ -234,7 +234,7 @@
 - id: t-preamble
   term: Preamble
   category: mac
-  meaning: The signature sent on PRACH. 64 per cell.
+  meaning: 'The signature sent on PRACH. NR: 64 in each PRACH occasion. LTE: up to two sets of 64 per cell.'
 - id: t-harq
   term: HARQ
   category: mac
@@ -254,7 +254,7 @@
 - id: t-sr
   term: SR
   category: mac
-  meaning: "Scheduling request. One bit on PUCCH: I have uplink data."
+  meaning: 'Scheduling request. One bit on PUCCH: I have uplink data.'
 - id: t-bsr
   term: BSR
   category: mac
@@ -270,7 +270,7 @@
 - id: t-k0-k1-k2
   term: K0 / K1 / K2
   category: mac
-  meaning: "NR timing offsets: DCI to PDSCH, PDSCH to HARQ-ACK, DCI to PUSCH."
+  meaning: 'NR timing offsets: DCI to PDSCH, PDSCH to HARQ-ACK, DCI to PUSCH.'
 - id: t-sps-cg
   term: SPS / CG
   category: mac
@@ -278,7 +278,7 @@
 - id: t-olla
   term: OLLA
   category: mac
-  meaning: Outer-loop link adaptation. Adjusts MCS from ACK/NACK to hold the BLER target.
+  meaning: Outer-loop link adaptation. Vendor implementation that adjusts MCS from ACK/NACK to hold a BLER target.
 - id: t-rlc-am-um-tm
   term: RLC AM / UM / TM
   category: l2
@@ -294,7 +294,7 @@
 - id: t-t-reordering-t-reassembly
   term: t-Reordering / t-Reassembly
   category: l2
-  meaning: RLC receive timer. How long to wait for a missing piece before reporting it lost.
+  meaning: 't-Reassembly: NR RLC timer to wait for missing segments. t-Reordering: LTE RLC reordering timer, and in NR the PDCP reordering timer (NR RLC does not reorder).'
 - id: t-maxretxthreshold
   term: maxRetxThreshold
   category: l2
@@ -322,7 +322,7 @@
 - id: t-rrc-idle-connected-inactive
   term: RRC_IDLE / CONNECTED / INACTIVE
   category: rrc
-  meaning: RRC states. Inactive exists only in NR.
+  meaning: RRC states. Inactive (suspended, context kept) exists in NR and in LTE connected to the 5G core.
 - id: t-sib
   term: SIB
   category: rrc
@@ -374,7 +374,7 @@
 - id: t-t311
   term: T311
   category: rrc
-  meaning: Timer for finding a cell after radio link failure.
+  meaning: Timer for cell selection during RRC re-establishment. On expiry the UE goes to idle.
 - id: t-t3410-t3510
   term: T3410 / T3510
   category: rrc
@@ -390,11 +390,11 @@
 - id: t-a3-event
   term: A3 event
   category: rrc
-  meaning: "Measurement event: neighbor better than serving by an offset. Usual handover trigger."
+  meaning: 'Measurement event: neighbor better than serving by an offset. Usual handover trigger.'
 - id: t-a2-a5-b1
   term: A2 / A5 / B1
   category: rrc
-  meaning: "Events: serving below threshold; serving below and neighbor above; inter-RAT neighbor above threshold."
+  meaning: 'Events: serving below threshold; serving below and neighbor above; inter-RAT neighbor above threshold.'
 - id: t-ttt
   term: TTT
   category: rrc
@@ -422,7 +422,7 @@
 - id: t-s-criterion
   term: S criterion
   category: rrc
-  meaning: Rule for whether a cell is good enough to camp on.
+  meaning: 'Cell selection rule: Srxlev > 0 and Squal > 0 (RSRP and RSRQ above the broadcast minimums, after offsets).'
 - id: t-q-rxlevmin
   term: q-RxLevMin
   category: rrc
@@ -434,7 +434,7 @@
 - id: t-establishment-cause
   term: Establishment cause
   category: rrc
-  meaning: "Why the phone is connecting: mo-Data, mo-Signalling, mt-Access, emergency."
+  meaning: 'Why the phone is connecting: mo-Data, mo-Signalling, mt-Access, emergency.'
 - id: t-ntn
   term: NTN
   category: ntn
@@ -442,7 +442,7 @@
 - id: t-leo
   term: LEO
   category: ntn
-  meaning: Low Earth orbit. A few hundred to about 2,000 km. Satellites move at about 7.5 km/s.
+  meaning: Low Earth orbit, a few hundred to about 2,000 km. Orbital speed is about 7.7 km/s at 350 km and slower higher up (7.6 km/s at 550 km).
 - id: t-direct-to-cell-d2c-d2d
   term: Direct-to-cell (D2C / D2D)
   category: ntn
@@ -478,11 +478,11 @@
 - id: t-sib19
   term: SIB19
   category: ntn
-  meaning: "NR system information for NTN: ephemeris, common timing advance, K offset, validity time."
+  meaning: 'NR system information for NTN: ephemeris, common timing advance, K offset, validity time.'
 - id: t-common-ta
   term: Common TA
   category: ntn
-  meaning: Timing advance part broadcast by the network, covering the feeder link.
+  meaning: 'Timing advance part broadcast by the network: the round-trip time between the uplink reference point and the satellite.'
 - id: t-k-offset
   term: K_offset
   category: ntn
@@ -514,7 +514,7 @@
 - id: t-isl
   term: ISL
   category: ntn
-  meaning: Inter-satellite link. Starlink uses lasers.
+  meaning: Inter-satellite link, for example an optical (laser) link between satellites.
 - id: t-n255-n256
   term: n255 / n256
   category: ntn
@@ -534,15 +534,15 @@
 - id: t-accessibility
   term: Accessibility
   category: kpi
-  meaning: "KPI family: can users connect? Setup success rates."
+  meaning: 'KPI family: can users connect? Setup success rates.'
 - id: t-retainability
   term: Retainability
   category: kpi
-  meaning: "KPI family: do connections stay up? Drop rate."
+  meaning: 'KPI family: do sessions stay up? 3GPP counts abnormal releases with data buffered, per session time.'
 - id: t-integrity
   term: Integrity
   category: kpi
-  meaning: "KPI family: quality. Throughput, latency, BLER."
+  meaning: 'KPI family: quality. Throughput, latency, BLER.'
 - id: t-mobility-kpi
   term: Mobility KPI
   category: kpi
@@ -554,7 +554,7 @@
 - id: t-drop-rate
   term: Drop rate
   category: kpi
-  meaning: Abnormal releases over all releases.
+  meaning: 'Operator metric: abnormal releases over all releases. Not the same formula as the 3GPP retainability KPI (per session time).'
 - id: t-handover-success-rate
   term: Handover success rate
   category: kpi
