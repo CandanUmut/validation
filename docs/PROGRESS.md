@@ -11,7 +11,8 @@
 | R1 | Research setup and first module (RRC and NAS) | **Done**: 10 lessons rewritten from TS 38.331, 36.331, 38.304, 24.501, 24.301, 23.122 (all Rel-17); 15 corrections; 1 case corrected; 6 gaps listed |
 | R2 | PHY module | **Done**: 10 lessons rewritten from TS 38.211–38.215, 38.321, 38.306, 38.101-1, 36.211–36.214, 36.306 (Rel-17); 2 gaps added |
 | R3 | MAC and RLC/PDCP modules | **Done**: 8 lessons rewritten (TS 38.321, 38.322, 38.323, 37.324, 38.300 …) |
-| R4 | Remaining modules: arch, ntn, kpi, logs, test, lab | In progress |
+| R4 | Remaining modules: arch, ntn, kpi, logs, test, lab | **Done**: all 59 lessons now `research` (41) or `practice` (18) |
+| R5 | Journey steps, cases, facts and terms | Next |
 | 4+ | Content, module by module, in the order in `CONTENT_PLAN.md` §4. One PR per module | Not started |
 
 Each phase ends with phone-size screenshots, test results and a PR.
@@ -31,3 +32,4 @@ Each phase ends with phone-size screenshots, test results and a PR.
 - **2026-11-13** — Tap targets: the e2e test enforces >= 48px. Log lines, filter chips and toggles were raised to 48px to meet it.
 - **2026-11-13** — Source access solved: the web-fetch tool downloads ETSI PDFs of the 3GPP specs (curl is blocked by Cloudflare). Full spec text is read locally with pdftotext; claims are marked checked only from that text. PDFs are not committed.
 - **2026-11-13** — R1 found a wrong teardown in case RAN-001: an airplane-mode cycle does not clear the forbidden PLMNs list (it is on the SIM, TS 23.122 §3.1). Corrected. Case RAN-009 has a similar doubt, listed as gap G4 for the case review.
+- **2026-11-13** — Added a third lesson status, `practice`, so engineering-practice lessons are not shown as 'checked against the specs'. Spec facts inside them are still checked.

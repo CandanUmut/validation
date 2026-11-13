@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { modules, lessons, terms } from '../../lib/data';
 import { u } from '../../lib/url';
 const ls = await lessons();
-const mods = (await modules()).map((m) => { const mine = ls.filter((l) => l.module === m.id); return { ...m, ids: mine.map((l) => l.id), checked: mine.length > 0 && mine.every((l) => l.source === 'research') }; });
+const mods = (await modules()).map((m) => { const mine = ls.filter((l) => l.module === m.id); return { ...m, ids: mine.map((l) => l.id), checked: mine.length > 0 && mine.every((l) => l.source !== 'v1'), practice: mine.length > 0 && mine.every((l) => l.source === 'practice') }; });
 const termCount = (await terms()).length;
 ---
 <Base tab="library" title="Library">
@@ -16,7 +16,7 @@ const termCount = (await terms()).length;
   <div class="sec" style="border-top:1px solid var(--rule)">
     {mods.map((m) => (
       <a class="mod" href={u(`library/${m.id}/`)} data-mod={m.id} data-ids={m.ids.join(',')}>
-        <span class="t">{m.title}{m.checked && <> <span class="tag pass">Checked</span></>}</span>
+        <span class="t">{m.title}{m.checked && (m.practice ? <> <span class="tag next">Practice</span></> : <> <span class="tag pass">Checked</span></>)}</span>
         <span class="s">{m.summary}</span>
         <span class="c"><span class="k">0</span>/{m.ids.length}</span>
         <div class="meter"><span style="width:0"></span></div>

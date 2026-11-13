@@ -14,4 +14,5 @@ Things the app does not yet state as checked, with why. Each gap is shown in the
 | G9 | Lesson b1 | FR2 spacing and maximum bandwidth (60/120 kHz, 400 MHz; FR2-2 up to 960 kHz) left out until TS 38.101-2 is read. | TS 38.101-2 §5 | R2 |
 | G10 | Lesson a4 | SpaceX's public description of its direct-to-cell satellites (on-board LTE base station, laser links) could not be re-checked: starlink.com/direct-to-cell returned 404 on 2026-11-13. **Removed from the lesson.** | A current public SpaceX source | R4 |
 | G11 | Lessons a1, a3 | HSS role (TS 23.401) and LTE QCI values (TS 23.203) not read; 5QI values checked. | TS 23.401, TS 23.203 | R4 |
+| G12 | Lesson i1 | Conformance spec numbers TS 38.523, TS 36.521, TS 36.523 named but not opened (TS 38.521-1 confirmed). | ETSI TS 138 523-1, 136 521-1, 136 523-1 | R4 |
 | G7 | All other modules | v1 lessons, journey steps, cases and facts outside RRC and NAS are unchecked and labelled so in the app. | Module research in the order of `CONTENT_PLAN.md` §4 | — |

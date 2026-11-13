@@ -18,8 +18,9 @@ const lessons = defineCollection({
     module: id,
     order: z.number().int(),
     title: z.string(),
-    /** v1 = written from general knowledge, not yet checked against the specs. research = written from docs/research. */
-    source: z.enum(['v1', 'research']),
+    /** v1 = written from general knowledge, not yet checked. research = a spec topic, written from docs/research.
+     *  practice = an engineering-practice topic: spec facts in it are checked, the rest is labelled as practice. */
+    source: z.enum(['v1', 'research', 'practice']),
     points: z.array(z.string()).default([]),
     say: z.string().optional(),
     trap: z.string().optional(),
