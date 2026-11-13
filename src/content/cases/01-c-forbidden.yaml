@@ -59,9 +59,10 @@ cause:
     - "Base station bug: Attach Accept not sent"
     - RF leakage in the shield box
   answer: 1
-  feedback: The phone behaves correctly. The suite leaves hidden state behind. Test 5 needs a teardown that clears the forbidden list (for example an airplane mode cycle or SIM refresh).
+  feedback: "The phone behaves correctly. The suite leaves hidden state behind. Test 5 needs a teardown that clears the PLMN from the forbidden PLMNs list. That list is stored on the SIM and is kept when the phone is switched off (TS 23.122 §3.1), so an airplane-mode cycle is not enough: rewrite the list with your SIM tool, or run reject tests on a PLMN the test SIM treats as home, which is never added to the list."
 bug: test_05 reject_handling leaves PLMN 310-260 on the UE forbidden list; later attach tests fail (suite only)
 learn:
   - Some reject causes change what the phone will try next, for a long time.
   - A test that passes alone and fails in a suite points to leftover state.
   - Every test must return the phone and the network to a known state.
+  - "Know where the state lives: the forbidden PLMNs list is on the SIM and survives power-off; forbidden tracking area lists are erased at switch-off and every 12 to 24 hours (TS 23.122 §3.1, TS 24.501 §5.3.13)."

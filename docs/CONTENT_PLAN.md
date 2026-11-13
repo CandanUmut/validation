@@ -13,7 +13,10 @@ Audience (Umut, 2026-11-13): UE / device validation, RAN / gNB validation, opera
 5. **Simplified logs stay labelled** as teaching logs, not real tool output.
 6. **Existing content is re-checked.** The current 59 lessons, 93 journey steps, 12 cases and 49 facts were written from general knowledge. Each one gets a source or a gap entry during its module's research.
 
-### Source access (problem to solve)
+### Source access (solved 2026-11-13)
+The web-fetch tool can download the ETSI PDFs of the specs (folder listings give exact versions), so research reads the primary text. The options below were the earlier fallback.
+
+#### Earlier options
 3GPP and ETSI block automated downloads from this cloud environment (Cloudflare returns 403). Options:
 - **A.** Umut downloads the spec list below (free from 3gpp.org) and puts them in a local folder that a session can read. They are not committed to the repo.
 - **B.** Research uses web search for spec text and cites sections, marking a claim "verified" only when the section text itself was read.
