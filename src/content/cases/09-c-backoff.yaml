@@ -43,9 +43,9 @@ decisions:
         feedback: It attaches by itself later, on a timer.
   - question: How should the test automation handle this?
     options:
-      - text: Reset the phone's NAS state (airplane mode cycle) after any core outage, and record that it did so
+      - text: Recover the phone deliberately after any core outage (power-cycle it), and record that it did so
         score: 2
-        feedback: Yes. That clears the attempt counter and T3402, and the log shows why.
+        feedback: "Yes. The attach attempt counter is reset when the UE is powered on or a USIM is inserted (TS 24.301 §5.5.1.1). An airplane-mode toggle is not named in the spec, so whether it clears the back-off depends on the phone: verify it on each model before relying on it."
       - text: Add a 15-minute sleep to every test
         score: 0
         feedback: That wastes hours and hides the state problem.
@@ -61,7 +61,7 @@ cause:
     - SIM blocked
   answer: 1
   feedback: Nothing is broken. The lab and the automation need to know about NAS back-off, and recover the phone deliberately after an outage.
-bug: "Not a product bug. Lab note: after core outage, UEs sit in T3402 back-off for 12 min; framework must cycle airplane mode before the next test"
+bug: "Not a product bug. Lab note: after core outage, UEs sit in T3402 back-off for 12 min; framework must power-cycle the UE (attempt counter reset at power-on, TS 24.301 §5.5.1.1) before the next test"
 learn:
   - Retry patterns with exact spacing are usually timers working as designed.
   - Know T3410 (15 s), T3411 (10 s) and T3402 (12 min) by heart.
