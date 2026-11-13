@@ -11,7 +11,7 @@ Things the app does not yet state as checked, with why. Each gap is shown in the
 | G5 | Journey ch. 01 (LTE) | LTE S criterion stated without Squal and Qoffsettemp. NR's rule is checked (TS 38.304 §5.2.3.2); LTE's is in TS 36.304, not read. | TS 36.304 §5.2.3.2 | R1 |
 | G6 | Lesson e10 | Order of PLMN selection (HPLMN/EHPLMN, user and operator controlled lists) kept general. | TS 23.122 §4.4.3 | R1 |
 | G8 | Lesson b1 | LTE RB counts are checked (MIB `dl-Bandwidth`); the pairing with 1.4/3/5/10/15/20 MHz is in TS 36.101 Table 5.6-1, too large for the fetch tool. | TS 36.101 (or TS 36.104) | R2 |
-| G9 | Lesson b1 | FR2 spacing and maximum bandwidth (60/120 kHz, 400 MHz; FR2-2 up to 960 kHz) left out until TS 38.101-2 is read. | TS 38.101-2 §5 | R2 |
+| G9 | Lesson b1 | FR2 ranges now checked (FR2-1 24.25–52.6 GHz, FR2-2 52.6–71 GHz, TS 38.101-1 Table 5.1-1). FR2 spacing and maximum bandwidth still left out until TS 38.101-2 is read. | TS 38.101-2 §5 | R2 |
 | G10 | Lesson a4 | SpaceX's public description of its direct-to-cell satellites (on-board LTE base station, laser links) could not be re-checked: starlink.com/direct-to-cell returned 404 on 2026-11-13. **Removed from the lesson.** | A current public SpaceX source | R4 |
 | G11 | Lessons a1, a3 | HSS role (TS 23.401) and LTE QCI values (TS 23.203) not read; 5QI values checked. | TS 23.401, TS 23.203 | R4 |
 | G12 | Lesson i1 | Conformance spec numbers TS 38.523, TS 36.521, TS 36.523 named but not opened (TS 38.521-1 confirmed). | ETSI TS 138 523-1, 136 521-1, 136 523-1 | R4 |
