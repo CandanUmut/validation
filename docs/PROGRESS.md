@@ -9,7 +9,8 @@
 | 0 | Design brief, content plan, phone mockup | **Approved** 2026-11-13 |
 | 1+2+3 | Astro rebuild with the approved design: every feature ported, content collections with schema checks, self-hosted fonts, offline, contrast check, phone e2e test, GitHub Actions deploy | **Done**, waiting for review (PR #1) |
 | R1 | Research setup and first module (RRC and NAS) | **Done**: 10 lessons rewritten from TS 38.331, 36.331, 38.304, 24.501, 24.301, 23.122 (all Rel-17); 15 corrections; 1 case corrected; 6 gaps listed |
-| R2 | Next module: NR physical layer (CONTENT_PLAN §4 order: 3) | Next |
+| R2 | PHY module | **Done**: 10 lessons rewritten from TS 38.211–38.215, 38.321, 38.306, 38.101-1, 36.211–36.214, 36.306 (Rel-17); 2 gaps added |
+| R3 | Next module: mobility and RRC follow-ups (CONTENT_PLAN §4 order: 6, then 12) | Next |
 | 4+ | Content, module by module, in the order in `CONTENT_PLAN.md` §4. One PR per module | Not started |
 
 Each phase ends with phone-size screenshots, test results and a PR.

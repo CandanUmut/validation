@@ -10,4 +10,6 @@ Things the app does not yet state as checked, with why. Each gap is shown in the
 | G4 | Case RAN-009 "Fails for exactly twelve minutes" | Its best move is "reset the phone's NAS state (airplane mode cycle)". TS 24.301 §5.5.1.1 resets the attach attempt counter "when the UE is powered on" or "a USIM is inserted"; whether an airplane-mode toggle counts is up to each phone. | Case review (module 12 research) | R1 |
 | G5 | Journey ch. 01 (LTE) | LTE S criterion stated without Squal and Qoffsettemp. NR's rule is checked (TS 38.304 §5.2.3.2); LTE's is in TS 36.304, not read. | TS 36.304 §5.2.3.2 | R1 |
 | G6 | Lesson e10 | Order of PLMN selection (HPLMN/EHPLMN, user and operator controlled lists) kept general. | TS 23.122 §4.4.3 | R1 |
+| G8 | Lesson b1 | LTE RB counts are checked (MIB `dl-Bandwidth`); the pairing with 1.4/3/5/10/15/20 MHz is in TS 36.101 Table 5.6-1, too large for the fetch tool. | TS 36.101 (or TS 36.104) | R2 |
+| G9 | Lesson b1 | FR2 spacing and maximum bandwidth (60/120 kHz, 400 MHz; FR2-2 up to 960 kHz) left out until TS 38.101-2 is read. | TS 38.101-2 §5 | R2 |
 | G7 | All other modules | v1 lessons, journey steps, cases and facts outside RRC and NAS are unchecked and labelled so in the app. | Module research in the order of `CONTENT_PLAN.md` §4 | — |
