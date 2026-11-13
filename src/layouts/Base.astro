@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import { palettes } from '../styles/palettes.mjs';
+import { APP } from '../config';
+import { u } from '../lib/url';
+import Icon from '../components/Icon.astro';
+import Mark from '../components/Mark.astro';
+import { deck } from '../lib/data';
+const cardCount = (await deck()).length;
+
+interface Props { title?: string; tab?: 'today' | 'journey' | 'cases' | 'review' | 'library' | 'search' | 'settings'; description?: string }
+const { title, tab, description = APP.description } = Astro.props;
+const full = title ? `${title} · ${APP.name}` : APP.long;
+const vars = (p: Record<string, string>, grid: string) => Object.entries(p).map(([k, v]) => `--${k}:${v}`).join(';') + `;--grid:${grid}`;
+const L = vars(palettes.light, 'rgba(23,32,42,.06)'), D = vars(palettes.dark, 'rgba(255,255,255,.045)');
+const tokens = `:root{${L};color-scheme:light}@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){${D};color-scheme:dark}}:root[data-theme="dark"]{${D};color-scheme:dark}`;
+const tabs = [['today', 'Today', ''], ['journey', 'Journey', 'journey/'], ['cases', 'Cases', 'cases/'], ['review', 'Review', 'review/'], ['library', 'Library', 'library/']] as const;
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{full}</title>
+<meta name="description" content={description}>
+<meta name="theme-color" content={palettes.light.paper} media="(prefers-color-scheme: light)">
+<meta name="theme-color" content={palettes.dark.paper} media="(prefers-color-scheme: dark)">
+<link rel="manifest" href={u('manifest.webmanifest')}>
+<link rel="icon" href={u('icons/icon.svg')} type="image/svg+xml">
+<link rel="apple-touch-icon" href={u('icons/apple-touch-icon.png')}>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content={APP.name}>
+<style is:inline set:html={tokens}></style>
+<script is:inline>try{var t=(JSON.parse(localStorage.getItem("ran-validation-v1")||"{}").set||{}).theme;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-base={u()} data-cards={cardCount}>
+<header class="top"><div class="wrap">
+  <a class="mark" href={u()} aria-label={`${APP.name}, today`}><Mark /><b>{APP.name}</b><span>{APP.tagline}</span></a>
+  <a class="ib" href={u('search/')} aria-label="Search" aria-current={tab === 'search' ? 'page' : undefined}><Icon name="search" /></a>
+  <a class="ib" href={u('settings/')} aria-label="Settings and backup" aria-current={tab === 'settings' ? 'page' : undefined}><Icon name="settings" /></a>
+</div></header>
+<main id="main" class="wrap"><slot /></main>
+<nav class="nav" aria-label="Sections"><ul>
+  {tabs.map(([id, label, path]) => (
+    <li><a href={u(path)} aria-current={tab === id ? 'page' : undefined} data-tab={id}><Icon name={id} />{label}</a></li>
+  ))}
+</ul></nav>
+<script>
+  import { badge } from '../scripts/chrome';
+  badge();
+  if ('serviceWorker' in navigator && location.hostname !== 'localhost') navigator.serviceWorker.register(document.body.dataset.base + 'sw.js').catch(() => {});
+</script>
+</body>
+</html>

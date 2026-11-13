@@ -1,0 +1,98 @@
+id: j-ho
+order: 7
+title: Measurements and handover
+summary: Moving a live connection to another cell without dropping it.
+lanes:
+  - Phone
+  - Source
+  - Target
+  - Core
+steps:
+  - from: 1
+    to: 0
+    message: Measurement configuration
+    layer: RRC
+    what: "The source cell tells the phone what to measure and when to report: events, thresholds, hysteresis, time-to-trigger."
+    log: "[RRC] measConfig event=A3 offset=3dB hyst=1dB ttt=320ms"
+    why: What are the three tuning knobs of event A3?
+    answer: The offset, the hysteresis, and the time-to-trigger.
+  - from: 0
+    to: 0
+    message: Measure, filter, wait for time-to-trigger
+    layer: RRC
+    what: The phone measures serving and neighbor cells, smooths the results, and waits until the event condition has held long enough.
+    log: "[RRC] meas serv pci=214 rsrp=-108  nbr pci=37 rsrp=-103  A3 entered"
+    why: What does too short a time-to-trigger cause? Too long?
+    answer: "Too short: handovers on brief changes and ping-pong. Too long: late handovers and drops."
+  - from: 0
+    to: 1
+    message: MeasurementReport
+    layer: RRC
+    what: The phone reports the neighbor. This uplink message has to get through on a link that is already getting worse.
+    log: "[RRC] UL-DCCH MeasurementReport event=A3 nbr_pci=37 rsrp=-103"
+    why: What is a too-late handover?
+    answer: The link fails before the report is received or before the handover command reaches the phone.
+  - from: 1
+    to: 2
+    message: Handover Request
+    layer: X2AP
+    what: "The source asks the target to take the phone and passes its context: bearers, security, capabilities."
+    log: "[X2AP] HandoverRequest target_pci=37"
+    why: What can make the target refuse?
+    answer: No free resources (admission control), or it does not know or support what the phone needs.
+  - from: 2
+    to: 1
+    message: Handover Request Acknowledge
+    layer: X2AP
+    what: The target accepts and builds the RRC message the phone will get, with a dedicated preamble.
+    log: "[X2AP] HandoverRequestAcknowledge preamble_id=52"
+    why: Why does the target give a dedicated preamble?
+    answer: So random access to the target is contention-free. No other phone uses that preamble, so it is faster and cannot collide.
+  - from: 1
+    to: 0
+    message: Handover command (RRCConnectionReconfiguration with mobilityControlInfo)
+    layer: RRC
+    what: The source forwards the target's message. The phone starts T304 and leaves the source cell.
+    log: "[RRC] DL-DCCH RRCConnectionReconfiguration mobilityControlInfo target_pci=37 t304=500ms"
+    why: Which timer starts here, and what does its expiry mean?
+    answer: "T304. If it expires, the phone could not access the target: handover failure, then re-establishment."
+  - from: 1
+    to: 2
+    message: SN Status Transfer and data forwarding
+    layer: X2AP
+    what: The source tells the target where the packet counters stand and forwards buffered data, so nothing is lost or repeated.
+    log: "[X2AP] SNStatusTransfer ul_count=8812 dl_count=20417"
+    why: Radio is fine after handover but data is stuck. What do you suspect?
+    answer: Packet counters or keys out of step (PDCP), or the path switch in the core did not happen.
+  - from: 0
+    to: 2
+    message: Random access to the target
+    layer: MAC
+    what: The phone syncs to the target and sends the dedicated preamble. The response gives the new timing advance.
+    log: "[MAC] RA target pci=37 preamble_id=52 contention_free  Msg2 ta=6"
+    why: Why is random access needed at handover at all?
+    answer: The phone has no uplink timing for the new cell. It needs a new timing advance.
+  - from: 0
+    to: 2
+    message: RRCConnectionReconfigurationComplete
+    layer: RRC
+    what: Sent to the target. T304 stops. The handover has succeeded from the phone's side.
+    log: "[RRC] UL-DCCH RRCConnectionReconfigurationComplete (to pci=37)"
+    why: How is handover interruption time measured?
+    answer: From the handover command to the first data on the target cell.
+  - from: 2
+    to: 3
+    message: Path Switch Request
+    layer: S1AP
+    what: The target asks the core to send downlink data to it from now on.
+    log: "[S1AP] PathSwitchRequest / Acknowledge"
+    why: Until the path switch, how does downlink data reach the phone?
+    answer: It still arrives at the source, which forwards it to the target.
+  - from: 2
+    to: 1
+    message: UE Context Release
+    layer: X2AP
+    what: The source frees everything it held for this phone.
+    log: "[X2AP] UEContextRelease"
+    why: Handover has two halves in the KPIs. Name them.
+    answer: Preparation (request and acknowledge between cells) and execution (command, access to target, complete).

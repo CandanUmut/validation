@@ -1,0 +1,65 @@
+id: c-40s
+order: 6
+title: A drop every forty seconds
+tag: Mobility
+brief: In a field test under a satellite, the data session drops at a regular interval, about every 40 seconds.
+setup: Phone outdoors, clear sky, logging on. Network-side log available.
+log:
+  - 12:00:41.210 [RRC] meas serv pci=301 rsrp=-119
+  - 12:00:41.900 [NET] beam switch 301 -> 302 scheduled 12:00:42.000
+  - 12:00:42.050 [PHY] rlm out_of_sync
+  - 12:00:42.250 [RRC] T310 start
+  - 12:00:43.250 [RRC] T310 expiry RLF
+  - 12:00:43.900 [RRC] ReestablishmentRequest pci=302 cause=otherFailure
+  - 12:00:44.010 [RRC] ReestablishmentReject
+  - 12:01:21.880 [NET] beam switch 302 -> 303 scheduled 12:01:22.000
+  - 12:01:22.040 [PHY] rlm out_of_sync
+  - 12:01:23.240 [RRC] T310 expiry RLF
+decisions:
+  - question: The drops are regular. What does a fixed period suggest?
+    options:
+      - text: Something scheduled, such as a beam or satellite change
+        score: 2
+        feedback: Yes. Random fading does not keep time. Line the drops up against scheduled events.
+      - text: Random interference
+        score: 0
+        feedback: Interference would not repeat every 40 seconds to the second.
+      - text: A weak battery
+        score: 0
+        feedback: Nothing in the log supports that.
+  - question: Each drop follows a beam switch by about 50 ms. What is missing from the phone log before each switch?
+    options:
+      - text: A handover command (RRCConnectionReconfiguration with mobility info)
+        score: 2
+        feedback: Right. The beam changes and the phone was never told to move.
+      - text: A paging message
+        score: 0
+        feedback: Paging is for idle phones. This phone is connected.
+      - text: A SIB1 update
+        score: 0
+        feedback: System information does not move a connected phone.
+  - question: Re-establishment on the new beam is rejected. What does that add?
+    options:
+      - text: The new beam has no context for the phone, so no handover was prepared
+        score: 2
+        feedback: "Yes. Both findings agree: the switch happens with no handover preparation."
+      - text: The phone's security keys are wrong
+        score: 1
+        feedback: A token mismatch can cause a reject, but together with the missing handover command, an unprepared target is the simpler explanation.
+      - text: The new beam is overloaded
+        score: 0
+        feedback: Possible in general, but it would not explain the missing handover command.
+cause:
+  question: Root cause?
+  options:
+    - Phone bug in radio link monitoring
+    - Beam switch happens without a handover being triggered or prepared for connected phones
+    - T310 is set too short
+    - The phone moved out of coverage
+  answer: 1
+  feedback: The phone does what the standard says when its cell vanishes. The network side must trigger a handover before each scheduled switch, and prepare the target so re-establishment can work as a fallback.
+bug: "RLF 50 ms after every beam switch (period ~40 s): no handover command sent before switch; re-establishment on new beam rejected (no UE context)"
+learn:
+  - A regular pattern points to a scheduled cause.
+  - Check what is missing, not only what is present.
+  - Two independent clues that agree make a strong root cause.

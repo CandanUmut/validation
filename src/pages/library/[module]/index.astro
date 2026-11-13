@@ -1,0 +1,32 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Icon from '../../../components/Icon.astro';
+import { modules, lessonsOf, pad2, type Module, type Lesson } from '../../../lib/data';
+import { u } from '../../../lib/url';
+export async function getStaticPaths() {
+  const ms = await modules();
+  return Promise.all(ms.map(async (m) => ({ params: { module: m.id }, props: { m, ls: await lessonsOf(m.id), total: ms.length } })));
+}
+interface Props { m: Module; ls: Lesson[]; total: number }
+const { m, ls, total } = Astro.props;
+---
+<Base tab="library" title={m.title}>
+  <div class="back"><a href={u('library/')}>‹ Library</a><span>{pad2(m.order)} / {pad2(total)}</span></div>
+  <span class="eyebrow">Module <b>{pad2(m.order)}</b> · {ls.length} lessons</span>
+  <h1 class="h h2">{m.title}</h1>
+  <p class="sub">{m.summary}</p>
+  <div class="sec" style="border-top:1px solid var(--rule)">
+    {ls.map((l) => (
+      <a class="les" href={u(`library/${m.id}/${l.id}/`)} data-lesson={l.id}>
+        <span class="tick"><Icon name="check" /></span>
+        <span class="tt">{l.title}</span>
+        <span class="c" aria-hidden="true">›</span>
+      </a>
+    ))}
+  </div>
+  <script>
+    import { state } from '../../../scripts/store';
+    import { $$ } from '../../../scripts/util';
+    for (const a of $$('[data-lesson]')) a.querySelector('.tick')!.classList.toggle('on', !!state.lessons[a.dataset.lesson!]);
+  </script>
+</Base>

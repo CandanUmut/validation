@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { chapters, pad2, type Chapter } from '../../lib/data';
+import { u } from '../../lib/url';
+import { ladder } from '../../scripts/draw';
+import { hlLog, lcls } from '../../scripts/util';
+export async function getStaticPaths() {
+  const ch = await chapters();
+  return ch.map((c, i) => ({ params: { id: c.id }, props: { c, next: ch[i + 1] ?? null, total: ch.length } }));
+}
+interface Props { c: Chapter; next: Chapter | null; total: number }
+const { c, next, total } = Astro.props;
+const dir = (s: Chapter['steps'][number]) => (s.from === s.to ? `inside ${c.lanes[s.from]}` : `${c.lanes[s.from]} → ${c.lanes[s.to]}`);
+---
+<Base tab="journey" title={c.title}>
+  <div id="overview">
+    <div class="back"><a href={u('journey/')}>‹ Journey</a><span>{pad2(c.order)} / {pad2(total)}</span></div>
+    <span class="eyebrow">Chapter <b>{pad2(c.order)}</b> · {c.steps.length} steps</span>
+    <h1 class="h h2">{c.title}</h1>
+    <p class="sub">{c.summary}</p>
+    <div class="sec"><div class="sh">Passes<span class="r" id="lvtxt"></span></div><div id="passes" style="border-top:1px solid var(--rule)"></div></div>
+    <div class="sec" id="study" hidden>
+      <div class="sh">Study view</div>
+      <Fragment set:html={ladder(c.lanes, c.steps)} />
+      <div style="margin-top:12px;border-top:1px solid var(--rule)">
+        {c.steps.map((s, k) => (
+          <details class="step">
+            <summary><span class="sn">{pad2(k + 1)}</span><span class={`layer ${lcls(s.layer)}`}>{s.layer}</span><span class="mm">{s.message}</span></summary>
+            <div class="body">
+              <p class="mono small" style="color:var(--ink-soft)">{dir(s)}</p>
+              <p style="margin:8px 0">{s.what}</p>
+              <div class="logline" set:html={hlLog(s.log)} />
+              <div class="why"><p class="wq">{s.why}</p><p class="wa">{s.answer}</p></div>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+    <div class="msg quiet sec" id="hidden-note" hidden><span class="lab">Why the flow is hidden</span>Trying to predict a step before you see it makes it stick better than reading it first. The study view opens after pass 1.</div>
+    {next && <a class="btn quiet sec" id="next-ch" hidden href={u(`journey/${next.id}/`)}>Next: {next.title} ›</a>}
+  </div>
+  <div id="play" hidden></div>
+  <script type="application/json" id="d-ch" set:html={JSON.stringify({ c, next: next ? { id: next.id, title: next.title } : null })} />
+  <script>import '../../scripts/chapter';</script>
+</Base>

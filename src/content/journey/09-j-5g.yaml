@@ -1,0 +1,89 @@
+id: j-5g
+order: 9
+title: '5G standalone: what is different'
+summary: The same journey on NR, with the 5G core. Learn it as differences.
+lanes:
+- Phone
+- gNB
+- AMF
+steps:
+- from: 1
+  to: 0
+  message: 'SSB beams: PSS, SSS and PBCH together'
+  layer: PHY
+  what: NR sends sync signals and the MIB as one block (SSB), repeated on several beams. The phone picks the strongest beam.
+  log: '[PHY] SSB idx=3 pci=501 ss_rsrp=-98dBm'
+  why: What replaces the always-on LTE reference signal for measurements in NR?
+  answer: The SSB (SS-RSRP) and, when configured, CSI-RS.
+- from: 1
+  to: 0
+  message: SIB1 through CORESET 0
+  layer: RRC
+  what: The MIB points to a control region called CORESET 0. There the phone finds the DCI for SIB1, which holds the common cell configuration, including random access.
+  log: '[RRC] SIB1 plmn=310-260 tac=0x00A1 scs=30kHz'
+  why: Where does NR put the random access configuration that LTE keeps in SIB2?
+  answer: In SIB1, inside the common serving cell configuration.
+- from: 0
+  to: 1
+  message: Random access on the occasion tied to the chosen beam
+  layer: MAC
+  what: Each SSB beam maps to its own PRACH occasions. By choosing where to send, the phone tells the gNB which beam it hears best.
+  log: '[MAC] Msg1 ssb=3 preamble_id=12'
+  why: How does the gNB know which beam to use for the response?
+  answer: From the PRACH occasion the preamble arrived on. Occasions are mapped to SSB beams.
+- from: 0
+  to: 1
+  message: RRCSetupComplete [Registration Request]
+  layer: RRC
+  what: 'Same idea as LTE with new names: RRCSetupRequest, RRCSetup, RRCSetupComplete. The NAS message is Registration Request, with a concealed identity (SUCI).'
+  log: '[RRC] RRCSetupComplete  [NAS] Registration Request id=SUCI'
+  why: What privacy improvement does 5G make to the first NAS message?
+  answer: The permanent identity is sent concealed (SUCI), not in clear like the LTE IMSI.
+- from: 2
+  to: 0
+  message: 5G-AKA authentication and NAS security
+  layer: NAS
+  what: 'Same pattern as LTE: authenticate, then switch on NAS security.'
+  log: '[NAS] Authentication Request/Response  Security Mode Command/Complete'
+  why: Which core function runs NAS for the phone in 5G?
+  answer: The AMF. Session messages are passed on to the SMF.
+- from: 1
+  to: 0
+  message: RRCReconfiguration [Registration Accept]
+  layer: RRC
+  what: After RRC security, the gNB sets up SRB2 and measurements and delivers Registration Accept.
+  log: '[RRC] RRCReconfiguration srb2  [NAS] Registration Accept'
+  why: After Registration Accept, can the phone send data?
+  answer: Not yet. Registration does not create a data session in 5G.
+- from: 0
+  to: 2
+  message: Registration Complete
+  layer: NAS
+  what: The phone confirms the new 5G-GUTI. (T3510 already stopped when Registration Accept arrived.) It is registered but still has no data session.
+  log: '[NAS] Registration Complete'
+  why: What is the 5G counterpart of T3410?
+  answer: T3510, also 15 seconds.
+- from: 0
+  to: 2
+  message: PDU Session Establishment Request
+  layer: NAS
+  what: A separate procedure. The phone names the data network (DNN) and the slice it wants.
+  log: '[NAS] UL PDU Session Establishment Request dnn=internet'
+  why: A phone is registered but has no data. Which procedure do you check?
+  answer: PDU session establishment, and the cause value if it was rejected (for example missing or unknown DNN).
+- from: 2
+  to: 0
+  message: 'PDU Session Establishment Accept: bearer and QoS flow'
+  layer: NAS
+  what: Delivered inside an RRCReconfiguration that adds the data bearer. The new SDAP layer maps QoS flows to bearers.
+  log: '[RRC] RRCReconfiguration drb1  [NAS] PDU Session Establishment Accept qfi=1 5qi=9'
+  why: What does SDAP do?
+  answer: It maps QoS flows to data radio bearers. It exists only in NR.
+- from: 1
+  to: 0
+  message: 'RRCRelease with suspend: RRC_INACTIVE'
+  layer: RRC
+  what: NR can park the phone in a third state. Both sides keep the context, so the next connection is a quick resume.
+  log: '[RRC] RRCRelease suspendConfig  state=INACTIVE'
+  why: What is the benefit of RRC_INACTIVE over idle?
+  answer: Faster return to connected with less signaling, because the context is kept.

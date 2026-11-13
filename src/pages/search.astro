@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base tab="search" title="Search">
+  <div class="head"><h1 class="h h2">Search</h1></div>
+  <input class="field" id="q" type="search" placeholder="Terms, lessons, steps, cases, facts" autocomplete="off" spellcheck="false" aria-label="Search everything" style="margin-top:8px">
+  <p class="note" id="hint" style="margin-top:12px">Try <b class="mono">T310</b>, <b class="mono">HARQ</b> or <b class="mono">handover</b>.</p>
+  <div id="res" style="margin-top:8px"></div>
+  <script>
+    import { base, esc } from '../scripts/util';
+    type It = { g: string; t: string; s: string; x: string; h?: string; mono?: 1 };
+    const q = document.getElementById('q') as HTMLInputElement, box = document.getElementById('res')!, hint = document.getElementById('hint')!;
+    let idx: It[] | null = null;
+    const mark = (text: string, words: string[]) => { if (!words.length) return esc(text); const re = new RegExp('(' + words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'ig'); return text.split(re).map((p, i) => (i % 2 ? '<mark>' + esc(p) + '</mark>' : esc(p))).join(''); };
+    async function run() {
+      if (!idx) idx = await (await fetch(base() + 'data/search.json')).json();
+      const v = q.value.trim().toLowerCase(), words = v.split(/\s+/).filter(Boolean);
+      hint.hidden = !!words.length;
+      if (!words.length) { box.innerHTML = ''; return; }
+      const hits = idx!.filter((it) => words.every((w) => it.x.includes(w))).map((it) => { const tl = it.t.toLowerCase(); let sc = 0; for (const w of words) sc += tl.startsWith(w) ? 6 : tl.includes(w) ? 3 : 0; if (tl === v) sc += 10; return { it, sc }; }).sort((a, b) => b.sc - a.sc).slice(0, 60);
+      const order = ['Terms', 'Lessons', 'Journey steps', 'Cases', 'Facts'];
+      hits.sort((a, b) => order.indexOf(a.it.g) - order.indexOf(b.it.g) || b.sc - a.sc);
+      if (!hits.length) { box.innerHTML = `<p class="note">Nothing matches “${esc(q.value)}”.</p>`; return; }
+      let g = '', h = '';
+      for (const { it } of hits) { if (it.g !== g) { g = it.g; h += `<div class="sh" style="margin:18px 0 0">${g}</div>`; } h += `<${it.h ? `a href="${it.h}"` : 'button style="width:100%;text-align:left" data-open'} class="res"><p class="t${it.mono ? ' mono' : ''}">${mark(it.t, words)}</p><p class="s">${mark(it.s, words)}</p></${it.h ? 'a' : 'button'}>`; }
+      box.innerHTML = h;
+    }
+    box.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest('[data-open]'); if (b) b.classList.toggle('open'); });
+    q.addEventListener('input', run);
+    const pre = new URLSearchParams(location.search).get('q'); if (pre) { q.value = pre; run(); }
+    q.focus();
+  </script>
+</Base>

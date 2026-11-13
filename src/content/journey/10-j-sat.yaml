@@ -1,0 +1,96 @@
+id: j-sat
+order: 10
+title: The same journey from orbit
+summary: Each stage again, when the cell tower flies at 7.7 km/s. Reasoned from physics and public information.
+lanes:
+- Phone
+- Satellite
+steps:
+- from: 1
+  to: 0
+  message: 'Sync: downlink pre-shifted for Doppler at the beam center'
+  layer: PHY
+  what: 'Reasoning, not a published design: raw Doppler at 1.9 GHz reaches about 44 kHz near the horizon, nearly three 15 kHz subcarriers. A satellite that knows its own motion can pre-shift its downlink so it is correct at the centre of each beam.'
+  log: '[SAT] beam=17 dl_precomp=-31.4kHz'
+  why: Work out the worst-case Doppler at 1.9 GHz for a satellite at 550 km.
+  answer: Only the line-of-sight speed counts. It peaks near the horizon at v·R/(R+h) ≈ 7.6 × 6371/6921 ≈ 7.0 km/s, so (7.0 / 300,000) × 1.9 GHz ≈ 44 kHz.
+- from: 0
+  to: 0
+  message: Residual Doppler tracked by the phone
+  layer: PHY
+  what: A phone away from the beam center still sees a leftover offset, and it changes during the pass. The phone's normal frequency tracking has to hold it.
+  log: '[PHY] freq_err=+1.9kHz drift=-140Hz/s'
+  why: Why do smaller beams help an unmodified phone?
+  answer: The difference in Doppler and delay between the beam center and its edge is smaller, so the leftover error is smaller.
+- from: 0
+  to: 1
+  message: Preamble arrives with a large, uncertain delay
+  layer: MAC
+  what: The path is hundreds of kilometers long, and its length differs across the beam. The satellite must search a wider window for preambles.
+  log: '[SAT] prach detect preamble=37 delay=1.93ms (beam ref 1.87ms)'
+  why: What is the one-way delay to a satellite 550 km straight overhead?
+  answer: About 1.8 ms. Light covers 300 km per millisecond.
+- from: 1
+  to: 0
+  message: 'Response: common delay handled by the network, timing advance covers the rest'
+  layer: MAC
+  what: Standard LTE timing advance reaches about 100 km. The large common part of the delay has to be absorbed on the network side, so the phone's timing advance only covers differences inside the beam.
+  log: '[SAT] RAR ta=412 (relative to beam ref)'
+  why: Why is the standard LTE timing advance not enough by itself?
+  answer: Its range covers about 100 km of distance. A satellite is several hundred to over a thousand kilometers away.
+- from: 0
+  to: 0
+  message: 'Timing drifts: frequent timing advance updates'
+  layer: MAC
+  what: The path length changes by kilometers every second. Timing advance must be corrected often, or the uplink slides out of the cyclic prefix.
+  log: '[MAC] TA cmd=+3 ... TA cmd=+3 ... TA cmd=+2'
+  why: What is the symptom of timing advance drifting too far?
+  answer: Uplink block errors rise, then the uplink fails, while the downlink may still look fine.
+- from: 0
+  to: 1
+  message: 'Uplink: 0.2 W, few resource blocks, low MCS'
+  layer: PHY
+  what: Free-space path loss at 1.9 GHz is about 153 dB overhead and about 163 dB at 10° elevation. The phone is power-limited, so it gets few RBs and robust coding.
+  log: '[MAC] phr=0dB ul rb=1 mcs=2'
+  why: Work out free-space path loss at 550 km and 1900 MHz.
+  answer: 32.45 + 20 log10(550) + 20 log10(1900) = 32.45 + 54.8 + 65.6, about 153 dB.
+- from: 1
+  to: 0
+  message: HARQ timing has to fit the round trip
+  layer: MAC
+  what: LTE FDD expects feedback 4 ms after the data. Extra propagation delay eats into the phone's processing time, so the timeline has to be arranged to still fit.
+  log: '[SAT] harq rtt budget: prop 2x1.9ms'
+  why: What did Release 17 NTN add for HARQ on long links?
+  answer: A scheduling offset (K_offset), up to 32 HARQ processes, and the option to switch HARQ feedback off.
+- from: 0
+  to: 0
+  message: Layer 2 timers have to allow for the delay
+  layer: RLC
+  what: Reordering and poll timers tuned for a tower can fire too early and cause needless retransmissions on an already thin link.
+  log: '[RLC] t_reordering expiry -> status nack_sn=221 (late arrival)'
+  why: What happens if the RLC reordering timer is shorter than the real HARQ delay?
+  answer: RLC asks for retransmission of data that was still on its way. Capacity is wasted and throughput falls.
+- from: 1
+  to: 0
+  message: 'Beam or satellite change: every phone hands over'
+  layer: RRC
+  what: The satellite moves on within minutes. All phones in a beam must change at about the same time, and signal strength barely differs between cell center and edge.
+  log: '[RRC] RRCConnectionReconfiguration mobilityControlInfo target_pci=302'
+  why: Why do strength-based triggers like A3 work poorly from orbit?
+  answer: The path length is almost the same at cell center and edge, so strength differences are small. Time or location triggers work better.
+- from: 0
+  to: 0
+  message: 'Coverage gap: paging and delivery have to wait'
+  layer: NAS
+  what: With a partial constellation there can be gaps between passes. A page sent in a gap is missed, and delivery waits for a retry.
+  log: '[NAS] no service 00:03:40 ... service restored'
+  why: An SMS arrives minutes late on a satellite link. What do you compare?
+  answer: The times the core paged, against the times the phone actually had coverage, and the core's retry schedule.
+- from: 0
+  to: 0
+  message: Back to the ground network when one appears
+  layer: RRC
+  what: Which network the phone uses is decided by PLMN selection (TS 23.122) and the operator's configuration. In practice the aim is to use the satellite only without terrestrial coverage and to return quickly.
+  log: '[RRC] reselect to terrestrial plmn=310-260 earfcn=5035'
+  why: Which mechanisms decide when a phone uses the satellite network?
+  answer: PLMN selection order (home and preferred PLMNs first, set in TS 23.122 and the SIM's lists) and cell reselection priorities.

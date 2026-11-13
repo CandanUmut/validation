@@ -1,0 +1,745 @@
+# Glossary. id keeps v1 review progress.
+- id: t-ue
+  term: UE
+  category: arch
+  meaning: User equipment. The phone or modem.
+- id: t-ran
+  term: RAN
+  category: arch
+  meaning: Radio access network. The base stations and their software.
+- id: t-enb
+  term: eNB
+  category: arch
+  meaning: LTE base station (evolved NodeB).
+- id: t-gnb
+  term: gNB
+  category: arch
+  meaning: 5G NR base station.
+- id: t-epc
+  term: EPC
+  category: arch
+  meaning: 'LTE core network: MME, SGW, PGW, HSS.'
+- id: t-5gc
+  term: 5GC
+  category: arch
+  meaning: '5G core network: AMF, SMF, UPF and others.'
+- id: t-mme
+  term: MME
+  category: arch
+  meaning: LTE core function for signaling, mobility and authentication.
+- id: t-amf
+  term: AMF
+  category: arch
+  meaning: 5G core function for access and mobility. The 5G counterpart of the MME.
+- id: t-upf
+  term: UPF
+  category: arch
+  meaning: 5G core function that carries user data.
+- id: t-s1-ng
+  term: S1 / NG
+  category: arch
+  meaning: Interface between base station and core. S1 in LTE (S1AP), NG in 5G (NGAP).
+- id: t-x2-xn
+  term: X2 / Xn
+  category: arch
+  meaning: Interface between two base stations. X2 in LTE, Xn in NR. Used for handover.
+- id: t-uu
+  term: Uu
+  category: arch
+  meaning: The air interface between phone and base station.
+- id: t-nsa-en-dc
+  term: NSA / EN-DC
+  category: arch
+  meaning: Non-standalone 5G. LTE anchor plus NR secondary cell, on the LTE core.
+- id: t-sa
+  term: SA
+  category: arch
+  meaning: Standalone 5G. NR radio with the 5G core.
+- id: t-cu-du-ru
+  term: CU / DU / RU
+  category: arch
+  meaning: 3GPP splits a gNB into a central unit (RRC, SDAP, PDCP) and a distributed unit (RLC, MAC, PHY) over F1. The radio unit (lower PHY) split is O-RAN's, not 3GPP's.
+- id: t-plmn
+  term: PLMN
+  category: arch
+  meaning: 'Network identity: country code (MCC) plus network code (MNC).'
+- id: t-tac
+  term: TAC
+  category: arch
+  meaning: Tracking area code. A group of cells. The phone updates its location when it leaves its tracking area list.
+- id: t-pci
+  term: PCI
+  category: arch
+  meaning: Physical cell identity. 504 values in LTE, 1008 in NR. Found from PSS and SSS.
+- id: t-earfcn-nr-arfcn
+  term: EARFCN / NR-ARFCN
+  category: arch
+  meaning: Channel number that defines the carrier frequency.
+- id: t-rnti
+  term: RNTI
+  category: arch
+  meaning: Radio identity used to address a phone on PDCCH. C-RNTI, RA-RNTI, P-RNTI, SI-RNTI.
+- id: t-srb-drb
+  term: SRB / DRB
+  category: arch
+  meaning: Signaling radio bearer and data radio bearer.
+- id: t-qci-5qi
+  term: QCI / 5QI
+  category: arch
+  meaning: QoS class of a bearer or flow.
+- id: t-ofdm
+  term: OFDM
+  category: phy
+  meaning: Modulation that splits the carrier into many narrow subcarriers.
+- id: t-scs
+  term: SCS
+  category: phy
+  meaning: 'Subcarrier spacing. 15 kHz in LTE. NR: 15 × 2^μ kHz; FR1 uses 15, 30 or 60 kHz; Release 17 defines up to 960 kHz.'
+- id: t-rb-prb
+  term: RB / PRB
+  category: phy
+  meaning: Resource block. 12 subcarriers. The unit the scheduler hands out.
+- id: t-re
+  term: RE
+  category: phy
+  meaning: Resource element. One subcarrier in one symbol.
+- id: t-cp
+  term: CP
+  category: phy
+  meaning: Cyclic prefix. Guard at the start of each symbol against delay spread and timing error.
+- id: t-fr1-fr2
+  term: FR1 / FR2
+  category: phy
+  meaning: 'NR frequency ranges. FR1: 410 MHz to 7.125 GHz. FR2-1: 24.25 to 52.6 GHz. FR2-2: 52.6 to 71 GHz.'
+- id: t-fdd-tdd
+  term: FDD / TDD
+  category: phy
+  meaning: Uplink and downlink on separate frequencies, or sharing one frequency in time.
+- id: t-pss-sss
+  term: PSS / SSS
+  category: phy
+  meaning: Primary and secondary sync signals. Give timing and cell ID.
+- id: t-ssb
+  term: SSB
+  category: phy
+  meaning: NR block with PSS, SSS and PBCH. One per beam.
+- id: t-mib
+  term: MIB
+  category: phy
+  meaning: Master information block on PBCH. The minimum needed to find SIB1.
+- id: t-pdcch
+  term: PDCCH
+  category: phy
+  meaning: Downlink control channel. Carries DCI.
+- id: t-dci
+  term: DCI
+  category: phy
+  meaning: Downlink control information. Grants and assignments.
+- id: t-coreset
+  term: CORESET
+  category: phy
+  meaning: The time-frequency region where NR PDCCH is sent.
+- id: t-pdsch-pusch
+  term: PDSCH / PUSCH
+  category: phy
+  meaning: Downlink and uplink shared data channels.
+- id: t-pucch
+  term: PUCCH
+  category: phy
+  meaning: Uplink control channel. Carries ACK/NACK, scheduling requests and channel reports.
+- id: t-prach
+  term: PRACH
+  category: phy
+  meaning: Physical random access channel. Carries the preamble.
+- id: t-crs
+  term: CRS
+  category: phy
+  meaning: LTE cell-specific reference signal. Always on.
+- id: t-dmrs
+  term: DMRS
+  category: phy
+  meaning: Demodulation reference signal. Sent together with the data.
+- id: t-csi-rs
+  term: CSI-RS
+  category: phy
+  meaning: NR reference signal for channel measurement.
+- id: t-srs
+  term: SRS
+  category: phy
+  meaning: Sounding reference signal. Uplink, for the base station to measure the channel.
+- id: t-rsrp
+  term: RSRP
+  category: phy
+  meaning: Reference signal received power, per resource element, in dBm. Signal strength.
+- id: t-rsrq
+  term: RSRQ
+  category: phy
+  meaning: Reference signal received quality. Falls with load and interference.
+- id: t-sinr
+  term: SINR
+  category: phy
+  meaning: Signal to interference plus noise ratio. Best predictor of throughput.
+- id: t-cqi
+  term: CQI
+  category: phy
+  meaning: Channel quality indicator, 0 to 15, reported by the phone.
+- id: t-mcs
+  term: MCS
+  category: phy
+  meaning: Modulation and coding scheme chosen by the scheduler.
+- id: t-ri-pmi
+  term: RI / PMI
+  category: phy
+  meaning: Rank indicator and precoding matrix indicator. Phone's MIMO feedback.
+- id: t-bler
+  term: BLER
+  category: phy
+  meaning: Block error rate. Failed first transmissions over all first transmissions. CQI is defined at 10%, so schedulers usually aim near it.
+- id: t-tbs
+  term: TBS
+  category: phy
+  meaning: Transport block size. Bits carried in one scheduled transmission.
+- id: t-ldpc-polar
+  term: LDPC / Polar
+  category: phy
+  meaning: NR channel codes. LDPC for data channels and paging; polar for BCH and DCI, and for most uplink control (small payloads use a block code).
+- id: t-cfo
+  term: CFO
+  category: phy
+  meaning: Carrier frequency offset between transmitter and receiver. Doppler adds to it.
+- id: t-tpc
+  term: TPC
+  category: phy
+  meaning: Transmit power control command from the base station to the phone.
+- id: t-phr
+  term: PHR
+  category: mac
+  meaning: Power headroom report. How much transmit power the phone has left.
+- id: t-ta
+  term: TA
+  category: mac
+  meaning: Timing advance. How early the phone transmits so its uplink arrives aligned.
+- id: t-rach
+  term: RACH
+  category: mac
+  meaning: Random access procedure. Msg1 to Msg4.
+- id: t-rar
+  term: RAR
+  category: mac
+  meaning: Random access response (Msg2). Carries timing advance, uplink grant and temporary C-RNTI.
+- id: t-cbra-cfra
+  term: CBRA / CFRA
+  category: mac
+  meaning: Contention-based and contention-free random access.
+- id: t-preamble
+  term: Preamble
+  category: mac
+  meaning: 'The signature sent on PRACH. NR: 64 in each PRACH occasion. LTE: up to two sets of 64 per cell.'
+- id: t-harq
+  term: HARQ
+  category: mac
+  meaning: Fast retransmission at MAC with soft combining.
+- id: t-ndi
+  term: NDI
+  category: mac
+  meaning: New data indicator. Toggles for new data, unchanged for a retransmission.
+- id: t-rv
+  term: RV
+  category: mac
+  meaning: Redundancy version. Which parity bits are sent in a HARQ transmission.
+- id: t-dtx
+  term: DTX
+  category: mac
+  meaning: No feedback at all. The phone probably missed the DCI.
+- id: t-sr
+  term: SR
+  category: mac
+  meaning: 'Scheduling request. One bit on PUCCH: I have uplink data.'
+- id: t-bsr
+  term: BSR
+  category: mac
+  meaning: Buffer status report. How much uplink data is waiting.
+- id: t-mac-ce
+  term: MAC CE
+  category: mac
+  meaning: MAC control element. Small control message inside MAC.
+- id: t-drx
+  term: DRX
+  category: mac
+  meaning: Discontinuous reception. The phone sleeps between on-durations to save battery.
+- id: t-k0-k1-k2
+  term: K0 / K1 / K2
+  category: mac
+  meaning: 'NR timing offsets: DCI to PDSCH, PDSCH to HARQ-ACK, DCI to PUSCH.'
+- id: t-sps-cg
+  term: SPS / CG
+  category: mac
+  meaning: Semi-persistent scheduling and configured grant. Recurring allocation without a DCI each time.
+- id: t-olla
+  term: OLLA
+  category: mac
+  meaning: Outer-loop link adaptation. Vendor implementation that adjusts MCS from ACK/NACK to hold a BLER target.
+- id: t-rlc-am-um-tm
+  term: RLC AM / UM / TM
+  category: l2
+  meaning: Acknowledged, unacknowledged and transparent modes.
+- id: t-arq
+  term: ARQ
+  category: l2
+  meaning: Retransmission at RLC AM, driven by status reports.
+- id: t-status-report
+  term: Status report
+  category: l2
+  meaning: RLC message that lists received and missing sequence numbers.
+- id: t-t-reordering-t-reassembly
+  term: t-Reordering / t-Reassembly
+  category: l2
+  meaning: 't-Reassembly: NR RLC timer to wait for missing segments. t-Reordering: LTE RLC reordering timer, and in NR the PDCP reordering timer (NR RLC does not reorder).'
+- id: t-maxretxthreshold
+  term: maxRetxThreshold
+  category: l2
+  meaning: RLC limit on retransmissions of one PDU. Reaching it triggers radio link failure.
+- id: t-pdcp
+  term: PDCP
+  category: l2
+  meaning: Layer for ciphering, integrity, header compression and reordering.
+- id: t-rohc
+  term: ROHC
+  category: l2
+  meaning: Robust header compression. Shrinks IP headers, mainly for voice.
+- id: t-sdap
+  term: SDAP
+  category: l2
+  meaning: NR layer that maps QoS flows to data radio bearers.
+- id: t-rrc
+  term: RRC
+  category: rrc
+  meaning: Radio resource control. Connection, bearers, measurements, handover.
+- id: t-nas
+  term: NAS
+  category: rrc
+  meaning: Non-access stratum. Signaling between phone and core.
+- id: t-rrc-idle-connected-inactive
+  term: RRC_IDLE / CONNECTED / INACTIVE
+  category: rrc
+  meaning: RRC states. Inactive (suspended, context kept) exists in NR and in LTE connected to the 5G core.
+- id: t-sib
+  term: SIB
+  category: rrc
+  meaning: System information block. SIB1 has access info. Others have common config and reselection.
+- id: t-attach-registration
+  term: Attach / Registration
+  category: rrc
+  meaning: The procedure that registers the phone with the network. Attach in LTE, registration in 5G.
+- id: t-pdn-connection-pdu-session
+  term: PDN connection / PDU session
+  category: rrc
+  meaning: The data session. PDN connection in LTE, PDU session in 5G.
+- id: t-apn-dnn
+  term: APN / DNN
+  category: rrc
+  meaning: Name of the data network the session connects to.
+- id: t-tau
+  term: TAU
+  category: rrc
+  meaning: Tracking area update. LTE location update.
+- id: t-service-request
+  term: Service Request
+  category: rrc
+  meaning: NAS procedure to go from idle to connected.
+- id: t-aka
+  term: AKA
+  category: rrc
+  meaning: Authentication and key agreement between SIM and network.
+- id: t-security-mode-command
+  term: Security Mode Command
+  category: rrc
+  meaning: Message that starts ciphering and integrity. One at NAS, one at RRC.
+- id: t-cause-value
+  term: Cause value
+  category: rrc
+  meaning: Number in a reject message that says why.
+- id: t-t300
+  term: T300
+  category: rrc
+  meaning: Timer for RRC connection setup.
+- id: t-t304
+  term: T304
+  category: rrc
+  meaning: Timer for handover execution.
+- id: t-t310-n310-n311
+  term: T310 / N310 / N311
+  category: rrc
+  meaning: Radio link monitoring. N310 out-of-sync starts T310. N311 in-sync stops it. Expiry is radio link failure.
+- id: t-t311
+  term: T311
+  category: rrc
+  meaning: Timer for cell selection during RRC re-establishment. On expiry the UE goes to idle.
+- id: t-t3410-t3510
+  term: T3410 / T3510
+  category: rrc
+  meaning: NAS timers for attach (LTE) and registration (5G). 15 seconds.
+- id: t-rlf
+  term: RLF
+  category: rrc
+  meaning: Radio link failure.
+- id: t-re-establishment
+  term: Re-establishment
+  category: rrc
+  meaning: RRC procedure to recover a connection after failure.
+- id: t-a3-event
+  term: A3 event
+  category: rrc
+  meaning: 'Measurement event: neighbor better than serving by an offset. Usual handover trigger.'
+- id: t-a2-a5-b1
+  term: A2 / A5 / B1
+  category: rrc
+  meaning: 'Events: serving below threshold; serving below and neighbor above; inter-RAT neighbor above threshold.'
+- id: t-ttt
+  term: TTT
+  category: rrc
+  meaning: Time-to-trigger. How long an event condition must hold before a report is sent.
+- id: t-hysteresis
+  term: Hysteresis
+  category: rrc
+  meaning: Margin that stops an event from toggling on small changes.
+- id: t-handover
+  term: Handover
+  category: rrc
+  meaning: Network-controlled move of a connected phone to another cell.
+- id: t-cho
+  term: CHO
+  category: rrc
+  meaning: Conditional handover. The phone holds the command and executes it when a condition is met.
+- id: t-ping-pong
+  term: Ping-pong
+  category: rrc
+  meaning: Handing over to a cell and back again within a short time.
+- id: t-paging
+  term: Paging
+  category: rrc
+  meaning: How the network reaches an idle phone.
+- id: t-s-criterion
+  term: S criterion
+  category: rrc
+  meaning: 'Cell selection rule: Srxlev > 0 and Squal > 0 (RSRP and RSRQ above the broadcast minimums, after offsets).'
+- id: t-q-rxlevmin
+  term: q-RxLevMin
+  category: rrc
+  meaning: Minimum RSRP for camping, broadcast in SIB1.
+- id: t-cell-reselection
+  term: Cell reselection
+  category: rrc
+  meaning: Idle-mode move to a better cell, decided by the phone.
+- id: t-establishment-cause
+  term: Establishment cause
+  category: rrc
+  meaning: 'Why the phone is connecting: mo-Data, mo-Signalling, mt-Access, emergency.'
+- id: t-ntn
+  term: NTN
+  category: ntn
+  meaning: Non-terrestrial network. 3GPP's name for satellite and high-altitude access.
+- id: t-leo
+  term: LEO
+  category: ntn
+  meaning: Low Earth orbit, a few hundred to about 2,000 km. Orbital speed is about 7.7 km/s at 350 km and slower higher up (7.6 km/s at 550 km).
+- id: t-direct-to-cell-d2c-d2d
+  term: Direct-to-cell (D2C / D2D)
+  category: ntn
+  meaning: Satellite service straight to ordinary phones.
+- id: t-service-link
+  term: Service link
+  category: ntn
+  meaning: Radio link between satellite and phone.
+- id: t-feeder-link
+  term: Feeder link
+  category: ntn
+  meaning: Radio link between satellite and ground gateway.
+- id: t-transparent-payload
+  term: Transparent payload
+  category: ntn
+  meaning: Satellite repeats the signal. The base station is on the ground.
+- id: t-regenerative-payload
+  term: Regenerative payload
+  category: ntn
+  meaning: Base station functions are on the satellite.
+- id: t-doppler-shift
+  term: Doppler shift
+  category: ntn
+  meaning: Frequency change caused by relative motion. (v / c) x f x cos(angle).
+- id: t-doppler-rate
+  term: Doppler rate
+  category: ntn
+  meaning: How fast the Doppler shift changes during a pass.
+- id: t-ephemeris
+  term: Ephemeris
+  category: ntn
+  meaning: Data that describes a satellite's orbit and position over time.
+- id: t-sib19
+  term: SIB19
+  category: ntn
+  meaning: 'NR system information for NTN: ephemeris, common timing advance, K offset, validity time.'
+- id: t-common-ta
+  term: Common TA
+  category: ntn
+  meaning: 'Timing advance part broadcast by the network: the round-trip time between the uplink reference point and the satellite.'
+- id: t-k-offset
+  term: K_offset
+  category: ntn
+  meaning: Extra scheduling delay in NTN so that large timing advances fit.
+- id: t-pre-compensation
+  term: Pre-compensation
+  category: ntn
+  meaning: Correcting timing or frequency before transmitting, so it arrives correct.
+- id: t-residual-doppler
+  term: Residual Doppler
+  category: ntn
+  meaning: Frequency error left after pre-compensation at the beam center.
+- id: t-earth-fixed-earth-moving-cell
+  term: Earth-fixed / earth-moving cell
+  category: ntn
+  meaning: Whether the beam is steered to stay on one area or sweeps with the satellite.
+- id: t-elevation-angle
+  term: Elevation angle
+  category: ntn
+  meaning: Angle of the satellite above the horizon. Low elevation means a longer path and more loss.
+- id: t-slant-range
+  term: Slant range
+  category: ntn
+  meaning: Actual distance from phone to satellite.
+- id: t-spot-beam
+  term: Spot beam
+  category: ntn
+  meaning: One beam of the satellite antenna on the ground.
+- id: t-isl
+  term: ISL
+  category: ntn
+  meaning: Inter-satellite link, for example an optical (laser) link between satellites.
+- id: t-n255-n256
+  term: n255 / n256
+  category: ntn
+  meaning: NR NTN bands in L-band and S-band.
+- id: t-fspl
+  term: FSPL
+  category: ntn
+  meaning: Free-space path loss. 32.45 + 20 log10(km) + 20 log10(MHz).
+- id: t-link-budget
+  term: Link budget
+  category: ntn
+  meaning: Sum of powers, gains and losses that shows if a link works and with what margin.
+- id: t-kpi
+  term: KPI
+  category: kpi
+  meaning: Key performance indicator. A ratio or statistic from counters.
+- id: t-accessibility
+  term: Accessibility
+  category: kpi
+  meaning: 'KPI family: can users connect? Setup success rates.'
+- id: t-retainability
+  term: Retainability
+  category: kpi
+  meaning: 'KPI family: do sessions stay up? 3GPP counts abnormal releases with data buffered, per session time.'
+- id: t-integrity
+  term: Integrity
+  category: kpi
+  meaning: 'KPI family: quality. Throughput, latency, BLER.'
+- id: t-mobility-kpi
+  term: Mobility KPI
+  category: kpi
+  meaning: Handover success rate, ping-pong rate.
+- id: t-rrc-setup-success-rate
+  term: RRC setup success rate
+  category: kpi
+  meaning: Successful RRC setups over attempts.
+- id: t-drop-rate
+  term: Drop rate
+  category: kpi
+  meaning: 'Operator metric: abnormal releases over all releases. Not the same formula as the 3GPP retainability KPI (per session time).'
+- id: t-handover-success-rate
+  term: Handover success rate
+  category: kpi
+  meaning: Successful handovers over attempts. Split into preparation and execution.
+- id: t-residual-bler
+  term: Residual BLER
+  category: kpi
+  meaning: Block errors left after all HARQ retransmissions.
+- id: t-percentile
+  term: Percentile
+  category: kpi
+  meaning: Value below which a given share of samples fall. 10th percentile throughput shows the worst users.
+- id: t-baseline
+  term: Baseline
+  category: kpi
+  meaning: The reference result you compare against.
+- id: t-db-dbm-dbi
+  term: dB / dBm / dBi
+  category: lab
+  meaning: Ratio; power relative to 1 mW; antenna gain relative to isotropic.
+- id: t-noise-floor
+  term: Noise floor
+  category: lab
+  meaning: -174 dBm/Hz + 10 log10(bandwidth) + noise figure.
+- id: t-noise-figure
+  term: Noise figure
+  category: lab
+  meaning: How much noise a receiver adds, in dB.
+- id: t-attenuator
+  term: Attenuator
+  category: lab
+  meaning: Component that reduces signal level by a set amount.
+- id: t-splitter-combiner
+  term: Splitter / combiner
+  category: lab
+  meaning: Divides or joins RF paths. A 2-way splitter loses a bit over 3 dB per branch.
+- id: t-shield-box
+  term: Shield box
+  category: lab
+  meaning: Enclosure that isolates a device from outside signals.
+- id: t-conducted-test
+  term: Conducted test
+  category: lab
+  meaning: Test over cable to the antenna port.
+- id: t-ota-test
+  term: OTA test
+  category: lab
+  meaning: Over-the-air test through antennas.
+- id: t-path-loss-calibration
+  term: Path loss calibration
+  category: lab
+  meaning: Measured loss of each lab path, used to set true levels.
+- id: t-channel-emulator
+  term: Channel emulator
+  category: lab
+  meaning: Instrument that adds fading, delay and Doppler in a repeatable way.
+- id: t-spectrum-analyzer
+  term: Spectrum analyzer
+  category: lab
+  meaning: Instrument that shows signal power across frequency.
+- id: t-vna
+  term: VNA
+  category: lab
+  meaning: Vector network analyzer. Measures loss and reflection of cables and components.
+- id: t-10-mhz-reference
+  term: 10 MHz reference
+  category: lab
+  meaning: Shared clock that keeps instrument frequencies aligned.
+- id: t-pdu
+  term: PDU
+  category: lab
+  meaning: Power distribution unit. Remote power switching for devices.
+- id: t-uart-console
+  term: UART console
+  category: lab
+  meaning: Serial console for low-level access to a device.
+- id: t-scpi
+  term: SCPI
+  category: lab
+  meaning: Standard text command language for controlling instruments.
+- id: t-dut
+  term: DUT
+  category: test
+  meaning: Device under test.
+- id: t-functional-test
+  term: Functional test
+  category: test
+  meaning: Checks that a feature behaves as specified.
+- id: t-regression-test
+  term: Regression test
+  category: test
+  meaning: Checks that a new build did not break what worked.
+- id: t-iot-iodt
+  term: IOT / IODT
+  category: test
+  meaning: Interoperability testing between a network and phones from different vendors.
+- id: t-soak-stability-test
+  term: Soak / stability test
+  category: test
+  meaning: Long-duration test that finds leaks and rare failures.
+- id: t-conformance-test
+  term: Conformance test
+  category: test
+  meaning: Formal 3GPP test for certification.
+- id: t-npi
+  term: NPI
+  category: test
+  meaning: New product introduction. Taking a product from development to launch.
+- id: t-smoke-test
+  term: Smoke test
+  category: test
+  meaning: Short basic test run on every build.
+- id: t-flaky-test
+  term: Flaky test
+  category: test
+  meaning: A test that passes and fails without a code change.
+- id: t-fixture
+  term: Fixture
+  category: test
+  meaning: pytest setup and teardown code shared by tests.
+- id: t-parametrize
+  term: Parametrize
+  category: test
+  meaning: pytest feature to run one test over many input combinations.
+- id: t-ci-cd
+  term: CI/CD
+  category: test
+  meaning: Automated build, test and release pipeline.
+- id: t-bisect
+  term: Bisect
+  category: test
+  meaning: Search through builds or commits to find the first bad one.
+- id: t-triage
+  term: Triage
+  category: test
+  meaning: Sorting failures by cause and priority.
+- id: t-ue-simulator
+  term: UE simulator
+  category: test
+  meaning: Tool that acts as many phones to load-test a base station.
+- id: t-network-emulator
+  term: Network emulator
+  category: test
+  meaning: Instrument that acts as base station and core to test a phone.
+- id: t-qxdm
+  term: QXDM
+  category: tool
+  meaning: Qualcomm's modem diagnostic logging tool.
+- id: t-qcat
+  term: QCAT
+  category: tool
+  meaning: Qualcomm's offline log analysis tool.
+- id: t-xcal-xcap
+  term: XCAL / XCAP
+  category: tool
+  meaning: Accuver's drive-test collection and post-processing tools.
+- id: t-shannon-dm
+  term: Shannon DM
+  category: tool
+  meaning: Samsung's diagnostic monitor for Exynos modems. Same role as QXDM.
+- id: t-trace32
+  term: TRACE32
+  category: tool
+  meaning: Lauterbach hardware debugger (JTAG) for firmware-level debugging.
+- id: t-wireshark
+  term: Wireshark
+  category: tool
+  meaning: Packet analyzer. Decodes IP, S1AP, NGAP, GTP.
+- id: t-iperf
+  term: iperf
+  category: tool
+  meaning: Traffic generator for TCP and UDP throughput tests.
+- id: t-tcpdump
+  term: tcpdump
+  category: tool
+  meaning: Command-line packet capture.
+- id: t-adb
+  term: ADB
+  category: tool
+  meaning: Android Debug Bridge. Controls Android devices from a host.
+- id: t-at-commands
+  term: AT commands
+  category: tool
+  meaning: Text commands to control a modem.
+- id: t-itar
+  term: ITAR
+  category: tool
+  meaning: US export rules for defense-related technology. Limits who may access the technical data.

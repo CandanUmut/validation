@@ -1,0 +1,64 @@
+id: j-search
+order: 1
+title: "Power on: find a cell"
+summary: Before the phone can say anything, it has to listen.
+lanes:
+  - Phone
+  - eNB
+steps:
+  - from: 0
+    to: 0
+    message: Scan bands and channels
+    layer: PHY
+    what: The phone tunes to frequencies it used last and to the bands its SIM prefers, and looks for a signal.
+    log: "[PHY] scan band=25 earfcn=8665 rssi=-92dBm"
+    why: Why does the phone not scan every frequency in order?
+    answer: It keeps a list of last-used and preferred frequencies, so it finds its home network much faster than a full scan.
+  - from: 1
+    to: 0
+    message: PSS and SSS
+    layer: PHY
+    what: The sync signals repeat every 5 ms. From them the phone gets symbol and frame timing, its frequency error, and the cell ID.
+    log: "[PHY] PSS/SSS detected pci=214 freq_err=+310Hz"
+    why: Which three things does the phone learn from PSS and SSS?
+    answer: Timing (symbol and frame), frequency offset, and the physical cell ID (PCI).
+  - from: 1
+    to: 0
+    message: MIB on PBCH
+    layer: RRC
+    what: The master information block gives the downlink bandwidth and the system frame number. Now the phone can decode the control channel.
+    log: "[RRC] MIB dl_bw=5MHz sfn=412"
+    why: Why does the phone need the MIB before anything else?
+    answer: Without the bandwidth and frame number it cannot find or decode PDCCH, so it cannot read SIB1.
+  - from: 1
+    to: 0
+    message: SIB1 on PDSCH
+    layer: RRC
+    what: SIB1 says who owns the cell (PLMN), which tracking area it is in, whether it is barred, and the minimum signal level for camping.
+    log: "[RRC] SIB1 plmn=310-260 tac=0x1A2B barred=no q_rxlevmin=-124dBm"
+    why: Which SIB1 value decides whether a weak phone may camp?
+    answer: q-RxLevMin. It feeds the S criterion.
+  - from: 1
+    to: 0
+    message: SIB2 on PDSCH
+    layer: RRC
+    what: "SIB2 carries the common radio settings: where and how to send a random access preamble, uplink power settings, and timers such as T300 and T310."
+    log: "[RRC] SIB2 prach_cfg=3 root_seq=22 target_pwr=-104dBm ramp=2dB preamble_max=10 t300=1000ms"
+    why: Why can the phone not transmit before it has read SIB2?
+    answer: It does not yet know the PRACH resources or the power to use. Any transmission would be in the wrong place or at the wrong level.
+  - from: 0
+    to: 0
+    message: PLMN check and S criterion
+    layer: RRC
+    what: "The phone checks that the network is allowed and that the cell is strong enough: measured RSRP minus the minimum level must be above zero."
+    log: "[RRC] cell_select rsrp=-106dBm srxlev=18dB plmn_ok=yes"
+    why: State the S criterion in words.
+    answer: Measured RSRP minus (q-RxLevMin plus offsets) minus a power compensation term must be greater than zero.
+  - from: 0
+    to: 0
+    message: Camp on the cell (RRC_IDLE)
+    layer: RRC
+    what: The phone is now camped. It listens for paging, keeps measuring neighbors, and has no connection yet.
+    log: "[RRC] state=IDLE camped pci=214"
+    why: What does a camped idle phone do, and what does it not have?
+    answer: It monitors paging and system information and measures for reselection. It has no radio bearers and no C-RNTI.

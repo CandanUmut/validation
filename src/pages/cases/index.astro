@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import { cases, caseCode } from '../../lib/data';
+import { u } from '../../lib/url';
+const cs = await cases();
+const tags = [...new Set(cs.map((c) => c.tag))];
+---
+<Base tab="cases" title="Case files">
+  <div class="head">
+    <span class="eyebrow">Cases · <b id="passed">0</b> / {cs.length} passed</span>
+    <h1 class="h h1">Case files</h1>
+    <p class="sub">Failures to debug. Read the log, choose what to check next, name the root cause, then write the bug title. Best moves score 2, slower ones 1.</p>
+  </div>
+  <div class="chips sec" role="group" aria-label="Filter by area">
+    <button class="chip" data-tag="" aria-pressed="true">All <span class="c">{cs.length}</span></button>
+    {tags.map((t) => <button class="chip" data-tag={t} aria-pressed="false">{t} <span class="c">{cs.filter((c) => c.tag === t).length}</span></button>)}
+  </div>
+  <div style="border-top:1px solid var(--rule);margin-top:8px">
+    {cs.map((c) => (
+      <a class="row" href={u(`cases/${c.id}/`)} data-case={c.id} data-t={c.tag}>
+        <span class="n">{String(c.order).padStart(2, '0')}</span>
+        <span class="t">{c.title}</span>
+        <span class="m"><span class="mono">{caseCode(c.order)}</span> · {c.tag} · <span class="rec">not worked yet</span></span>
+        <span class="c"><span class="tag none">New</span></span>
+      </a>
+    ))}
+  </div>
+  <p class="note sec">Verdicts: <b>Pass</b> 85% or more · <b>Inconc</b> 60–84% · <b>Fail</b> under 60%. The logs are simplified teaching logs, not output from a real tool.</p>
+  <script>
+    import { state } from '../../scripts/store';
+    import { $$ } from '../../scripts/util';
+    const rows = $$('[data-case]');
+    const firstNew = rows.find((r) => !state.c[r.dataset.case!]);
+    let passed = 0;
+    for (const r of rows) {
+      const s = state.c[r.dataset.case!], tag = r.querySelector('.c .tag')!;
+      if (s) {
+        const v = s.best >= 0.85 ? ['pass', 'Pass'] : s.best >= 0.6 ? ['inc', 'Inconc'] : ['fail', 'Fail'];
+        if (s.best >= 0.85) passed++;
+        tag.className = 'tag ' + v[0]; tag.textContent = v[1];
+        r.querySelector('.rec')!.textContent = `best ${Math.round(s.best * 100)}% · ${s.n} run${s.n === 1 ? '' : 's'}`;
+      } else if (r === firstNew) { tag.className = 'tag next'; tag.textContent = 'Next'; r.classList.add('next'); }
+    }
+    document.getElementById('passed')!.textContent = String(passed);
+    for (const b of $$('[data-tag]')) b.addEventListener('click', () => {
+      for (const x of $$('[data-tag]')) x.setAttribute('aria-pressed', String(x === b));
+      for (const r of rows) r.hidden = !!b.dataset.tag && r.dataset.t !== b.dataset.tag;
+    });
+  </script>
+</Base>

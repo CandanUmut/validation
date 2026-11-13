@@ -1,0 +1,65 @@
+id: c-msg3
+order: 3
+title: Heard, answered, then silence
+tag: Random access
+brief: On a long-delay test link, the phone gets a random access response every time but never completes the connection.
+setup: LTE cell through a channel emulator adding 2 ms of one-way delay.
+log:
+  - "[MAC] Msg1 preamble_id=9 tx_pwr=14dBm attempt=1"
+  - "[MAC] Msg2 RAR ta=1282 tc_rnti=0x51C0"
+  - "[RRC] UL-CCCH RRCConnectionRequest"
+  - "[MAC] Msg3 tx harq_tx=1"
+  - "[MAC] Msg3 tx harq_tx=2"
+  - "[MAC] Msg3 tx harq_tx=3"
+  - "[MAC] Msg3 tx harq_tx=4"
+  - "[MAC] contention resolution timer expired"
+  - "[MAC] Msg1 preamble_id=40 tx_pwr=14dBm attempt=2"
+  - "[MAC] Msg2 RAR ta=1282 tc_rnti=0x51C4"
+decisions:
+  - question: Msg2 arrives, Msg3 is sent four times, Msg4 never comes. Which direction is failing?
+    options:
+      - text: "Uplink: the base station is not decoding Msg3"
+        score: 2
+        feedback: Yes. Msg3 keeps being retransmitted, which means it is never acknowledged.
+      - text: "Downlink: the phone cannot hear the cell"
+        score: 0
+        feedback: It decoded Msg2, so the downlink works.
+      - text: The core network
+        score: 0
+        feedback: Nothing has reached the core yet.
+  - question: Look at Msg2. Which value deserves a closer look?
+    options:
+      - text: ta=1282
+        score: 2
+        feedback: Right. 1282 is the maximum value the response can carry. It has hit the ceiling.
+      - text: tc_rnti changes between attempts
+        score: 0
+        feedback: That is normal. Each attempt gets a new temporary identity.
+      - text: preamble_id changes between attempts
+        score: 0
+        feedback: Normal. The phone picks a random preamble each time.
+  - question: TA is stuck at its maximum of 1282, which covers about 100 km. The link has 2 ms one-way delay. What follows?
+    options:
+      - text: The real delay needs more timing advance than the field can express, so Msg3 arrives late and cannot be decoded
+        score: 2
+        feedback: Yes. 2 ms one way is about 600 km. The phone advances as far as it is told, and it is not enough.
+      - text: The phone ignores timing advance
+        score: 0
+        feedback: There is no sign of that. It applies what it gets.
+      - text: Msg3 power is too low
+        score: 1
+        feedback: Possible in general, but power is 14 dBm with headroom, and the saturated TA is a direct explanation.
+cause:
+  question: Root cause?
+  options:
+    - Phone transmits Msg3 with wrong power
+    - Timing advance needed exceeds the LTE range; the common delay is not being absorbed on the network side
+    - Contention between two phones
+    - Wrong PRACH root sequence
+  answer: 1
+  feedback: Standard timing advance tops out near 100 km. On a long link the network has to shift its own receive timeline by the common delay so that the phone's timing advance only covers the remainder.
+bug: "Msg3 never decoded with 2 ms one-way delay: RAR timing advance saturates at 1282; common delay not compensated in eNB receive timing"
+learn:
+  - A value sitting exactly at its maximum is a clue, not a coincidence.
+  - Msg2 received and Msg3 failing points to timing advance or uplink quality.
+  - Long-delay links need the common delay handled by the network.

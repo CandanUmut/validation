@@ -1,0 +1,65 @@
+id: c-qrx
+order: 8
+title: Camped but cannot connect
+tag: Coverage
+brief: At low signal, phones show service bars but most connection attempts fail with T300 expiry.
+setup: LTE 5 MHz. Coverage test stepping the attenuation up.
+log:
+  - "[RRC] SIB1 q_rxlevmin=-140dBm"
+  - "[RRC] cell_select rsrp=-131dBm srxlev=9dB state=IDLE camped"
+  - "[MAC] Msg1 tx_pwr=23dBm attempt=1"
+  - "[MAC] RAR window expired"
+  - "[MAC] Msg1 tx_pwr=23dBm attempt=2"
+  - "[MAC] RAR window expired"
+  - "[MAC] Msg1 tx_pwr=23dBm attempt=5"
+  - "[MAC] Msg2 RAR ta=3"
+  - "[MAC] Msg3 tx harq_tx=4 (max)"
+  - "[RRC] T300 expiry"
+decisions:
+  - question: The phone is camped at RSRP -131 dBm. What is the preamble power on the first attempt?
+    options:
+      - text: 23 dBm, the phone's maximum, from the first try
+        score: 2
+        feedback: Yes. The phone has nothing left to give. This is a link budget limit, not a tuning detail.
+      - text: Low, with room to ramp
+        score: 0
+        feedback: "Look again: attempt 1 is already at 23 dBm."
+      - text: It is not shown
+        score: 0
+        feedback: It is in the first MAC line.
+  - question: Downlink still works well enough to camp and decode Msg2 once. Uplink fails. Why would the phone camp here at all?
+    options:
+      - text: q-RxLevMin is -140 dBm, so the S criterion passes far below where the uplink can reach
+        score: 2
+        feedback: Right. The camping threshold only looks at downlink level. It is set lower than the uplink can support.
+      - text: The phone has a bug in cell selection
+        score: 0
+        feedback: srxlev=9 dB is correct arithmetic for the broadcast value.
+      - text: The cell is barred
+        score: 0
+        feedback: A barred cell would not be selected.
+  - question: What is the right change to test, and what is the cost?
+    options:
+      - text: "Raise q-RxLevMin so phones only camp where the uplink works. Cost: a smaller service area on paper"
+        score: 2
+        feedback: Yes. Honest coverage is better than bars that do not work. Check access success rate at the edge before and after.
+      - text: Raise the PRACH target power
+        score: 0
+        feedback: The phone is already at maximum power. A higher target changes nothing.
+      - text: Lengthen T300
+        score: 1
+        feedback: More time allows a few more tries, but the uplink still cannot close. It hides the problem.
+cause:
+  question: Root cause?
+  options:
+    - Phone transmit power is faulty
+    - "q-RxLevMin set too low: phones camp where the uplink cannot reach the cell"
+    - Core network overload
+    - Wrong band
+  answer: 1
+  feedback: Downlink and uplink budgets differ. The base station can transmit far more power than a phone. The camping threshold has to reflect the weaker direction.
+bug: "T300 expiry on most attempts below RSRP -128 dBm: q-RxLevMin=-140 dBm lets UEs camp beyond uplink reach (preamble at 23 dBm from first attempt)"
+learn:
+  - Service bars come from the downlink. Access needs the uplink.
+  - When the phone is already at 23 dBm, look at link budget, not power settings.
+  - Name the cost of every parameter change.

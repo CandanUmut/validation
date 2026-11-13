@@ -1,0 +1,72 @@
+id: j-ul
+order: 5
+title: Uplink data
+summary: The phone has to ask before it can send.
+lanes:
+  - Phone
+  - eNB
+steps:
+  - from: 0
+    to: 0
+    message: Data arrives in the buffer, no grant
+    layer: MAC
+    what: An app sends a packet. The phone is connected but has no uplink resources.
+    log: "[MAC] ul_buffer=1420bytes grant=none"
+    why: Why can the phone not just transmit?
+    answer: All uplink resources are assigned by the scheduler. An unscheduled transmission would collide with other phones.
+  - from: 0
+    to: 1
+    message: Scheduling Request on PUCCH
+    layer: MAC
+    what: One bit, on a slot reserved for this phone that repeats at a set period.
+    log: "[MAC] SR sent sr_count=1"
+    why: What happens if scheduling requests are never answered?
+    answer: After the maximum count (sr-TransMax) the phone drops its PUCCH and starts random access.
+  - from: 1
+    to: 0
+    message: "DCI: small uplink grant"
+    layer: PHY
+    what: The eNB does not know how much data is waiting, so the first grant is small.
+    log: "[PHY] DCI 0 rnti=0x4A21 rb=2 mcs=6"
+    why: In LTE FDD, how long after the grant does the phone transmit?
+    answer: 4 subframes (4 ms).
+  - from: 0
+    to: 1
+    message: "PUSCH: buffer status report and power headroom"
+    layer: MAC
+    what: The phone uses the small grant to say how much data it has (BSR) and how much transmit power is left (PHR).
+    log: "[MAC] PUSCH bsr_index=38 phr=12dB"
+    why: What does a power headroom of 0 dB tell the scheduler?
+    answer: The phone is at maximum power. More resource blocks would only spread the same power thinner.
+  - from: 1
+    to: 0
+    message: "DCI: larger grant with MCS and power command"
+    layer: PHY
+    what: Now the scheduler sizes the grant to the buffer and the headroom, and sends a power control (TPC) command.
+    log: "[PHY] DCI 0 rb=12 mcs=15 tpc=+1dB"
+    why: Who picks the uplink MCS, and from what?
+    answer: The eNB. It measures the uplink signal on the phone's reference signals.
+  - from: 0
+    to: 1
+    message: PUSCH data
+    layer: PHY
+    what: The phone sends the data with demodulation reference signals so the eNB can estimate the channel.
+    log: "[PHY] PUSCH tx_pwr=17dBm rb=12 tbs=3112bits"
+    why: Write the idea of the uplink power formula.
+    answer: A target level per RB, plus a share (alpha) of the path loss, plus a term for the number of RBs, plus closed-loop corrections, capped at maximum power.
+  - from: 1
+    to: 0
+    message: HARQ feedback, or a grant to retransmit
+    layer: MAC
+    what: "LTE uplink HARQ is synchronous: a failed block is repeated exactly 8 ms later unless the eNB says otherwise."
+    log: "[MAC] ul harq=2 crc=ok ack"
+    why: What is the main difference between LTE uplink and downlink HARQ?
+    answer: Uplink is synchronous (fixed timing, process known from the subframe). Downlink is asynchronous (the DCI names the process).
+  - from: 1
+    to: 0
+    message: Timing advance command (MAC control element)
+    layer: MAC
+    what: The eNB measures when the uplink arrives and corrects the phone's timing in small steps. Each command restarts the time alignment timer.
+    log: "[MAC] TA cmd=+1 (0.52us) ta_total=15"
+    why: What does one LTE timing advance step equal in time and distance?
+    answer: 16 Ts, about 0.52 microseconds, which is about 78 meters of distance.

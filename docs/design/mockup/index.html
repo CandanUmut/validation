@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phase 0 mockup — signal &amp; spectrum</title>
+<!-- Mockup only: fonts load from Google here. The real app self-hosts them. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Atkinson+Hyperlegible+Next:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{--f-d:"Archivo",system-ui,sans-serif;--f-b:"Atkinson Hyperlegible Next",system-ui,sans-serif;--f-m:"JetBrains Mono",ui-monospace,monospace}
+.light{--paper:#F5F2EA;--card:#FBF9F4;--ink:#17202A;--ink-soft:#59626C;--faint:#8C9298;--rule:#DCD6C8;--grid:rgba(23,32,42,.06);--trace:#2747C9;--trace-soft:#E3E7FA;--marker:#F7DD72;--pass:#2F7A47;--pass-soft:#E1EFE4;--fail:#B3261E;--fail-soft:#F6E0DD;--inc:#9A6300;--inc-soft:#F5E8CF;
+  --L-phy:#B03A7A;--L-mac:#6E4BC8;--L-rrc:#2F7A47;--L-nas:#B4540A}
+.dark{--paper:#11161C;--card:#171D24;--ink:#E8E6E0;--ink-soft:#A3A9B0;--faint:#6C737B;--rule:#28303A;--grid:rgba(255,255,255,.04);--trace:#93A6FF;--trace-soft:#1E2747;--marker:#5C4E14;--pass:#6CC48A;--pass-soft:#16281D;--fail:#FF8A80;--fail-soft:#3A1C1A;--inc:#E8B04B;--inc-soft:#33270F;
+  --L-phy:#F08BC1;--L-mac:#B9A2FF;--L-rrc:#6CC48A;--L-nas:#FFA66B}
+*{box-sizing:border-box}
+body{margin:0;background:#DDD8CC;font-family:var(--f-b);color:#17202A;padding:44px 40px 60px}
+.intro{max-width:1720px;margin:0 auto 30px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+.intro h1{font-family:var(--f-d);font-stretch:112%;font-weight:700;font-size:30px;margin:0 0 6px;letter-spacing:-.01em}
+.intro p{margin:0;color:#4E565E;max-width:80ch;line-height:1.5}
+.intro .tag{font-family:var(--f-m);font-size:12px;color:#4E565E;white-space:nowrap}
+.row{display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.cap{font-family:var(--f-m);font-size:12px;color:#4E565E;margin:0 0 10px 6px;letter-spacing:.04em}
+.phone{width:390px;border-radius:38px;background:var(--paper);color:var(--ink);overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.12),0 30px 60px -30px rgba(40,30,10,.45);position:relative;font-size:17px;line-height:1.55}
+.sb{height:46px;display:flex;justify-content:space-between;align-items:center;padding:0 28px;font-family:var(--f-m);font-size:13px;font-weight:500}
+.app{padding:4px 18px 104px}
+.top{display:flex;align-items:center;justify-content:space-between;height:44px}
+.mark{display:flex;align-items:center;gap:9px;font-family:var(--f-d);font-stretch:108%;font-weight:700;font-size:16px}
+.mark svg{width:26px;height:26px}
+.date{font-family:var(--f-m);font-size:12.5px;color:var(--ink-soft)}
+.eyebrow{font-family:var(--f-m);font-size:12px;letter-spacing:.06em;color:var(--ink-soft)}
+.eyebrow b{color:var(--trace);font-weight:500}
+h1.t{font-family:var(--f-d);font-stretch:118%;font-weight:700;font-size:36px;line-height:1.02;letter-spacing:-.015em;margin:4px 0 6px}
+h2.t{font-family:var(--f-d);font-stretch:112%;font-weight:700;font-size:27px;line-height:1.1;letter-spacing:-.01em;margin:6px 0 8px}
+.sub{color:var(--ink-soft);margin:0}
+.trace{margin:14px -18px 4px;position:relative}
+.trace svg{display:block;width:100%}
+.tcap{display:flex;justify-content:space-between;font-family:var(--f-m);font-size:11.5px;color:var(--faint);padding:0 18px}
+.tcap span.on{color:var(--ink)}
+.note{font-size:13.5px;color:var(--ink-soft);line-height:1.45;margin:8px 0 0}
+.sec{margin-top:26px}
+.sh{font-family:var(--f-m);font-size:12px;letter-spacing:.06em;color:var(--ink-soft);display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sh::after{content:"";flex:1;height:1px;background:var(--rule)}
+.plan{border-top:1px solid var(--rule)}
+.it{display:grid;grid-template-columns:34px 1fr 20px;gap:2px 10px;align-items:center;min-height:72px;padding:12px 0;border-bottom:1px solid var(--rule);position:relative}
+.it .n{font-family:var(--f-m);font-size:13px;color:var(--faint);grid-row:span 2;align-self:start;padding-top:3px}
+.it .tt{font-weight:700;font-size:17px;line-height:1.3}
+.it .mm{grid-column:2;font-size:14px;color:var(--ink-soft)}
+.it .ch{grid-column:3;grid-row:1/span 2;color:var(--faint);font-size:20px}
+.it.next .n{color:var(--trace);font-weight:700}
+.it.next::before{content:"";position:absolute;left:-18px;top:14px;bottom:14px;width:3px;background:var(--trace);border-radius:0 3px 3px 0}
+.it.done .tt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--faint);text-decoration-thickness:1px}
+.it.done .n{color:var(--pass)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px}
+.ctitle{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.ctitle b{font-family:var(--f-d);font-stretch:108%;font-size:18px}
+.ctitle span{font-family:var(--f-m);font-size:12px;color:var(--ink-soft)}
+.const{display:flex;gap:14px;align-items:center;margin-top:10px}
+.const svg{width:168px;height:168px;flex:0 0 auto}
+.const .k{font-size:14px;color:var(--ink-soft);line-height:1.45}
+.const .k b{color:var(--ink);font-family:var(--f-m);font-weight:500}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:52px;border-radius:10px;font-weight:700;font-size:16px;border:1.5px solid var(--ink);color:var(--ink);background:transparent;margin-top:14px}
+.btn.pri{background:var(--trace);border-color:var(--trace);color:#fff}
+.dark .btn.pri{color:#0E1428}
+.spec svg{display:block;width:100%}
+.nav{position:absolute;left:0;right:0;bottom:0;height:86px;padding-bottom:22px;background:color-mix(in srgb,var(--paper) 92%,transparent);border-top:1px solid var(--rule);display:flex;justify-content:space-around;align-items:center}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--ink-soft);width:64px;padding-top:6px;position:relative}
+.nav a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.nav a.on{color:var(--ink);font-weight:700}
+.nav a.on svg{stroke:var(--trace)}
+.nav a.on::before{content:"";position:absolute;top:-1px;width:28px;height:2px;background:var(--trace);border-radius:2px}
+.nav .b{position:absolute;top:2px;left:38px;background:var(--trace);color:#fff;font-family:var(--f-m);font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px}
+.dark .nav .b{color:#0E1428}
+/* lesson */
+.back{display:flex;justify-content:space-between;align-items:center;height:44px;font-family:var(--f-m);font-size:13px;color:var(--ink-soft)}
+.fig{margin:14px -18px 8px;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.fig svg{display:block;width:100%}
+.figcap{font-size:13px;color:var(--ink-soft);line-height:1.45;margin:0 0 10px}
+p.b{margin:12px 0}
+code{font-family:var(--f-m);font-size:.86em;background:var(--trace-soft);color:var(--ink);padding:.05em .35em;border-radius:4px}
+.say{border-left:3px solid var(--trace);padding:6px 0 6px 14px;margin:18px 0}
+.say .l,.watch .l{font-family:var(--f-m);font-size:11.5px;letter-spacing:.06em;color:var(--trace);display:block;margin-bottom:3px}
+.say p{margin:0;font-family:var(--f-d);font-stretch:104%;font-weight:600;font-size:19px;line-height:1.35}
+.watch{background:var(--inc-soft);border-radius:8px;padding:12px 14px;font-size:15.5px}
+.watch .l{color:var(--inc)}
+.trail{margin-top:20px}
+.tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.tr .s{font-family:var(--f-m);font-size:13px;font-weight:500}
+.tr .d{grid-column:1;color:var(--ink-soft)}
+.tr .v{grid-row:1/span 2;grid-column:2;align-self:center;font-family:var(--f-m);font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 7px;border-radius:4px}
+.v.ok{color:var(--pass);background:var(--pass-soft)} .v.chk{color:var(--inc);background:var(--inc-soft)}
+/* case */
+.log{margin:14px -18px 0;background:var(--card);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);font-family:var(--f-m);font-size:11.6px;line-height:1.95;padding:8px 0}
+.ln{display:grid;grid-template-columns:30px 1fr;padding:0 12px 0 0;position:relative}
+.ln i{font-style:normal;color:var(--faint);text-align:right;padding-right:10px}
+.ln.hl span.x{background:linear-gradient(transparent 12%,var(--marker) 12%,var(--marker) 88%,transparent 88%);border-radius:2px}
+.k{color:var(--ink-soft)} .tg{font-weight:700}
+.tg.mac{color:var(--L-mac)} .tg.rrc{color:var(--L-rrc)}
+.ann{margin:2px 0 6px 30px;font-family:var(--f-m);font-size:11.5px;color:var(--trace);display:flex;gap:6px;align-items:flex-start}
+.ann svg{flex:0 0 auto;width:16px;height:16px;stroke:var(--trace);fill:none;stroke-width:1.6}
+.hint{font-size:13px;color:var(--ink-soft);margin:8px 0 0}
+.dt{margin-top:22px}
+.st{display:grid;grid-template-columns:28px 1fr;gap:12px;position:relative;padding-bottom:16px}
+.st::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:1.5px;background:var(--rule)}
+.st:last-child::before{display:none}
+.pt{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--rule);display:flex;align-items:center;justify-content:center;font-family:var(--f-m);font-size:12px;font-weight:700;color:var(--faint);background:var(--paper);position:relative;z-index:1}
+.pt.ok{border-color:var(--pass);color:var(--pass)}
+.pt.cur{background:var(--trace);border-color:var(--trace);color:#fff}
+.q{font-weight:700;line-height:1.35}
+.q.past{font-weight:400;color:var(--ink-soft);font-size:15px}
+.pk{font-size:14px;color:var(--ink-soft);margin-top:4px}
+.pk b{font-family:var(--f-m);font-size:11px;color:var(--pass);background:var(--pass-soft);padding:2px 6px;border-radius:4px;margin-right:6px}
+.opt{display:block;min-height:56px;border:1px solid var(--rule);background:var(--card);border-radius:10px;padding:14px 15px;margin-top:8px;font-size:15.5px;line-height:1.35}
+</style>
+</head>
+<body>
+<div class="intro"><div><h1>Signal &amp; spectrum — Phase 0 mockup</h1><p>Four phone screens at real size (390 px). Light first, with dark shown for Today. Sample text only: the real lesson text comes from the research docs, with sources. Nothing here is built into the app yet.</p></div><span class="tag">docs/design/mockup · for approval</span></div>
+<div class="row">
+  <div><p class="cap">01 · TODAY · LIGHT</p><div class="phone light" id="today-light"></div></div>
+  <div><p class="cap">02 · LESSON · LIGHT</p><div class="phone light" id="lesson"></div></div>
+  <div><p class="cap">03 · CASE FILE · LIGHT</p><div class="phone light" id="case"></div></div>
+  <div><p class="cap">04 · TODAY · DARK</p><div class="phone dark" id="today-dark"></div></div>
+</div>
+<script>
+/* deterministic noise so the mockup renders the same every time */
+let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+const gauss = () => { let u = 0, v = 0; while (!u) u = rnd(); while (!v) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+
+const MARK = '<svg viewBox="0 0 26 26" aria-hidden="true"><rect x=".75" y=".75" width="24.5" height="24.5" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 13c2-6 3.5-6 5 0s3 6 4.5 0 3-6 4.5 0 2.5 4 4 0" fill="none" stroke="var(--trace)" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const NAV = on => { const it = [["Today", '<path d="M3 14c2.5-7 4.5-7 6 0s3.5 7 6 0 3.5-7 6 0"/>'], ["Journey", '<path d="M5 3v18M19 3v18M5 8h11l-2.5-2.5M19 15H8l2.5 2.5"/>'], ["Cases", '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/>'], ["Review", '<rect x="3.5" y="7" width="13" height="13.5" rx="2"/><path d="M7.5 3.5h10a3 3 0 0 1 3 3v10"/>'], ["Library", '<path d="M4 4.5h4v15H4zM10 4.5h4v15h-4z"/><path d="M15.6 6.3l3.4-.9 3 12.6-3.4.9z"/>']];
+  return '<nav class="nav">' + it.map(x => '<a class="' + (x[0] === on ? "on" : "") + '"><svg viewBox="0 0 24 24">' + x[1] + "</svg>" + x[0] + (x[0] === "Review" ? '<span class="b">12</span>' : "") + "</a>").join("") + "</nav>"; };
+
+/* the trace: a modulated signal; solid up to "now", dotted after */
+function trace(){
+  const W = 390, H = 118, mid = 58, now = 0.58, pts = [];
+  for (let i = 0; i <= 260; i++) { const t = i / 260, x = 18 + t * (W - 36); const env = 0.35 + 0.65 * Math.sin(Math.PI * Math.min(1, t * 1.05)); const y = mid - (Math.sin(t * 2 * Math.PI * 9.5) * 30 + Math.sin(t * 2 * Math.PI * 23) * 6) * env; pts.push([x, y, t]); }
+  const path = arr => "M" + arr.map(p => p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" L");
+  const a = pts.filter(p => p[2] <= now), b = pts.filter(p => p[2] >= now), n = a[a.length - 1];
+  let s = '<svg viewBox="0 0 ' + W + " " + H + '" aria-label="Practice this week">';
+  for (let d = 0; d < 7; d++) { const x = 18 + (d + .5) / 7 * (W - 36); s += '<line x1="' + x + '" y1="10" x2="' + x + '" y2="' + (H - 8) + '" stroke="var(--rule)" stroke-dasharray="2 4"/>'; }
+  s += '<line x1="18" y1="' + mid + '" x2="' + (W - 18) + '" y2="' + mid + '" stroke="var(--rule)"/>';
+  s += '<path d="' + path(b) + '" fill="none" stroke="var(--faint)" stroke-width="1.6" stroke-dasharray="1.5 5" stroke-linecap="round"/>';
+  s += '<path d="' + path(a) + '" fill="none" stroke="var(--trace)" stroke-width="2.1" stroke-linejoin="round" stroke-linecap="round"/>';
+  s += '<circle cx="' + n[0] + '" cy="' + n[1] + '" r="9" fill="var(--trace)" opacity=".16"/><circle cx="' + n[0] + '" cy="' + n[1] + '" r="4.5" fill="var(--trace)"/>';
+  return s + "</svg>";
+}
+/* 16-QAM constellation: each card a point; spread = how shaky it is */
+function constellation(){
+  seed = 11; const L = [-3, -1, 1, 3], S = 168, c = S / 2, k = 19.5;
+  let s = '<svg viewBox="0 0 ' + S + " " + S + '" aria-label="Constellation of RRC and NAS cards">';
+  s += '<line x1="6" y1="' + c + '" x2="' + (S - 6) + '" y2="' + c + '" stroke="var(--rule)"/><line x1="' + c + '" y1="6" x2="' + c + '" y2="' + (S - 6) + '" stroke="var(--rule)"/>';
+  L.forEach(i => L.forEach(q => { const x = c + i * k, y = c - q * k; s += '<path d="M' + (x - 4) + " " + y + "h8M" + x + " " + (y - 4) + 'v8" stroke="var(--faint)" stroke-width="1"/>'; }));
+  for (let n = 0; n < 32; n++) { const i = L[n % 4], q = L[(n >> 2) % 4], shaky = [3, 9, 14, 18, 22, 27, 30].includes(n), sp = shaky ? 0.62 : 0.14;
+    const x = c + (i + gauss() * sp) * k, y = c - (q + gauss() * sp) * k;
+    s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (shaky ? 3.2 : 2.6) + '" fill="' + (shaky ? "var(--fail)" : "var(--trace)") + '" opacity="' + (shaky ? .9 : .85) + '"/>'; }
+  return s + "</svg>";
+}
+/* spectrum strip: modules as bands; height = share learned */
+function spectrum(){
+  const mods = [["RF", .7], ["ARC", .55], ["PHY", .4], ["L2", .3], ["RRC", .62], ["MOB", .25], ["DC", .05], ["VOX", 0], ["NTN", .35], ["CONF", .08], ["IOT", .12], ["LOG", .45], ["KPI", .2], ["LAB", .1], ["AUT", 0], ["INT", .15]];
+  const W = 354, H = 104, base = 78, bw = W / mods.length;
+  let s = '<svg viewBox="0 0 ' + W + " " + H + '" aria-label="Coverage across 16 modules">';
+  s += '<line x1="0" y1="' + base + '" x2="' + W + '" y2="' + base + '" stroke="var(--ink-soft)" stroke-width="1"/>';
+  mods.forEach((m, i) => { const x = i * bw, h = Math.max(1.5, m[1] * 64), top = base - h, w = bw - 3;
+    s += '<path d="M' + (x + 1.5) + " " + base + " L" + (x + 1.5) + " " + (top + 4) + " Q" + (x + 1.5) + " " + top + " " + (x + 5) + " " + top + " L" + (x + w - 2) + " " + top + " Q" + (x + w + 1.5) + " " + top + " " + (x + w + 1.5) + " " + (top + 4) + " L" + (x + w + 1.5) + " " + base + '" fill="' + (m[1] ? "var(--trace)" : "none") + '" fill-opacity="' + (0.18 + m[1] * 0.75).toFixed(2) + '" stroke="var(--trace)" stroke-width="' + (m[1] ? 1.2 : .8) + '" ' + (m[1] ? "" : 'stroke-dasharray="2 3"') + "/>";
+    s += '<text x="' + (x + bw / 2) + '" y="' + (base + 16) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="8.6" fill="var(--ink-soft)">' + m[0] + "</text>"; });
+  return s + "</svg>";
+}
+function today(){
+  return '<div class="sb"><span>9:41</span><span>5G ▂▄▆█</span></div><div class="app">' +
+  '<div class="top"><span class="mark">' + MARK + 'RAN Trainer</span><span class="date">Fri 13 Nov</span></div>' +
+  '<div class="trace">' + trace() + '<div class="tcap">' + ["M","T","W","T","F","S","S"].map((d,i) => '<span class="' + (i < 4 ? "on" : "") + '">' + d + "</span>").join("") + "</div></div>" +
+  '<p class="note">This week: 4 of 7 days practised. The solid line is done; the dot is today.</p>' +
+  '<h1 class="t" style="margin-top:18px">Today</h1><p class="sub">Three things, about 20 minutes.</p>' +
+  '<div class="sec"><div class="plan">' +
+    '<div class="it done"><span class="n">✓</span><span class="tt">Review 12 cards</span><span class="mm">Done at 08:12 · 1 missed</span><span class="ch">›</span></div>' +
+    '<div class="it next"><span class="n">02</span><span class="tt">Registration and PDU session</span><span class="mm">Journey ch. 03 · pass 2, fill the gaps · 8 min</span><span class="ch">›</span></div>' +
+    '<div class="it"><span class="n">03</span><span class="tt">Preambles into the void</span><span class="mm">Case RAN-002 · random access · 6 min</span><span class="ch">›</span></div>' +
+  "</div></div>" +
+  '<div class="sec"><div class="sh">WEAKEST MODULE</div><div class="card"><div class="ctitle"><b>RRC and NAS</b><span>32 cards</span></div>' +
+    '<div class="const">' + constellation() + '<div class="k">Each dot is a card. Dots on the crosses are solid. <b>7 red dots</b> are cards you keep missing.<br><br>Like EVM: the cleaner the cloud, the cleaner the link.</div></div>' +
+    '<a class="btn pri">Practise the 7 weak cards</a></div></div>' +
+  '<div class="sec"><div class="sh">COVERAGE · 16 MODULES</div><div class="spec">' + spectrum() + '</div><p class="note">Band height = share of the module learned. Dotted bands are not started.</p></div>' +
+  "</div>" + NAV("Today");
+}
+function beams(){
+  const W = 390, H = 256, gx = 46, gy = 128;
+  let s = '<svg viewBox="0 0 ' + W + " " + H + '" aria-label="Eight SSB beams swept in one burst">';
+  for (let i = 0; i < 8; i++) { const a = (-42 + i * 12) * Math.PI / 180, r = 140, w = 5.2 * Math.PI / 180;
+    const x1 = gx + r * Math.cos(a - w), y1 = gy + r * Math.sin(a - w), x2 = gx + r * Math.cos(a + w), y2 = gy + r * Math.sin(a + w), xm = gx + (r + 18) * Math.cos(a), ym = gy + (r + 18) * Math.sin(a);
+    const hot = i === 5;
+    s += '<path d="M' + gx + " " + gy + " L" + x1.toFixed(1) + " " + y1.toFixed(1) + " Q" + xm.toFixed(1) + " " + ym.toFixed(1) + " " + x2.toFixed(1) + " " + y2.toFixed(1) + ' Z" fill="var(--trace)" fill-opacity="' + (hot ? .3 : .07) + '" stroke="var(--trace)" stroke-width="' + (hot ? 1.6 : .9) + '"/>';
+    s += '<text x="' + (gx + (r + 30) * Math.cos(a)).toFixed(1) + '" y="' + (gy + (r + 30) * Math.sin(a) + 4).toFixed(1) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="10.5" fill="' + (hot ? "var(--trace)" : "var(--ink-soft)") + '" font-weight="' + (hot ? 700 : 400) + '">#' + i + "</text>"; }
+  s += '<path d="M' + (gx - 8) + " " + (gy + 22) + " L" + gx + " " + (gy - 10) + " L" + (gx + 8) + " " + (gy + 22) + '" fill="none" stroke="var(--ink)" stroke-width="1.6"/><text x="' + gx + '" y="' + (gy + 40) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="10.5" fill="var(--ink)">gNB</text>';
+  const a5 = (-42 + 5 * 12) * Math.PI / 180, ux = gx + 96 * Math.cos(a5), uy = gy + 96 * Math.sin(a5);
+  s += '<rect x="' + (ux - 7) + '" y="' + (uy - 11) + '" width="14" height="22" rx="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/><rect x="' + (ux - 74) + '" y="' + (uy + 22) + '" width="112" height="16" rx="3" fill="var(--paper)"/><text x="' + (ux - 70) + '" y="' + (uy + 34) + '" font-family="JetBrains Mono" font-size="10.5" fill="var(--ink)">UE hears #5 best</text>';
+  return s + "</svg>";
+}
+function burst(){
+  const W = 390, x0 = 18, w = W - 36; let s = '<svg viewBox="0 0 ' + W + ' 66" aria-label="SSB burst within a 5 ms half-frame">';
+  s += '<line x1="' + x0 + '" y1="20" x2="' + (x0 + w) + '" y2="20" stroke="var(--ink-soft)"/>';
+  for (let i = 0; i < 8; i++) { const x = x0 + 8 + i * 22; s += '<rect x="' + x + '" y="8" width="16" height="24" rx="2" fill="var(--trace)" fill-opacity="' + (i === 5 ? .9 : .25) + '" stroke="var(--trace)"/>'; }
+  s += '<text x="' + x0 + '" y="46" font-family="JetBrains Mono" font-size="10" fill="var(--ink-soft)">burst of 8 SSBs inside one 5 ms half-frame</text><text x="' + x0 + '" y="60" font-family="JetBrains Mono" font-size="10" fill="var(--ink-soft)">initial search assumes it repeats every 20 ms</text>';
+  return s + "</svg>";
+}
+function lesson(){
+  return '<div class="sb"><span>9:41</span><span>5G ▂▄▆█</span></div><div class="app">' +
+  '<div class="back"><span>‹ NR physical layer</span><span>07 / 18</span></div>' +
+  '<span class="eyebrow">MODULE 03 · <b>LESSON 07</b> · 6 MIN</span><h2 class="t">SSB and beam sweeping</h2>' +
+  '<div class="fig">' + beams() + burst() + '</div><p class="figcap">The gNB sends the same SSB in several beams, one after another. The UE measures each one and remembers the strongest index.</p>' +
+  '<p class="b">An <b>SS/PBCH block</b> (SSB) is four OFDM symbols: <code>PSS</code>, <code>SSS</code> and <code>PBCH</code>. It is how a UE finds the cell, gets timing and reads the MIB.</p>' +
+  '<p class="b">At higher frequencies one wide beam is not enough, so the gNB repeats the SSB in different directions. The <code>SSB index</code> tells the UE which beam it heard, and later decides which RACH occasion it uses.</p>' +
+  '<div class="say"><span class="l">SAY IT IN ONE BREATH</span><p>The SSB is the cell’s beacon: sync, cell ID and MIB in four symbols, swept across beams so every UE can find its best one.</p></div>' +
+  '<div class="watch"><span class="l">WATCH OUT</span>A UE that camps fine but fails RACH may be using the wrong SSB-to-RACH mapping. Check <code>ssb-perRACH-OccasionAndCB-PreamblesPerSSB</code> before blaming RF.</div>' +
+  '<div class="trail"><div class="sh">SPEC TRAIL</div>' +
+    '<div class="tr"><span class="s">TS 38.211 §7.4.3</span><span class="d">SS/PBCH block structure · Rel-17</span><span class="v ok">READ</span></div>' +
+    '<div class="tr"><span class="s">TS 38.213 §4.1</span><span class="d">Cell search, SSB candidate positions · Rel-17</span><span class="v ok">READ</span></div>' +
+    '<div class="tr"><span class="s">TS 38.213 §8.1</span><span class="d">SSB to RACH occasion mapping · Rel-17</span><span class="v chk">CHECK</span></div></div>' +
+  '<a class="btn pri" style="margin-top:20px">Mark as read · add 4 cards</a>' +
+  "</div>" + NAV("Library");
+}
+function caseFile(){
+  const L = [
+    ['<span class="tg rrc">[RRC]</span> SIB2 prach_cfg=3 target_pwr=-112dBm <span class="x">ramp=0dB</span> preamble_max=4', true],
+    ['<span class="tg rrc">[RRC]</span> cell_select rsrp=-118dBm srxlev=6dB', false],
+    ['<span class="tg mac">[MAC]</span> Msg1 preamble_id=21 <span class="x">tx_pwr=10dBm</span> attempt=1', true],
+    ['<span class="tg mac">[MAC]</span> RAR window expired', false],
+    ['<span class="tg mac">[MAC]</span> Msg1 preamble_id=21 <span class="x">tx_pwr=10dBm</span> attempt=2', true],
+    ['<span class="tg mac">[MAC]</span> RAR window expired', false],
+    ['<span class="tg mac">[MAC]</span> Msg1 preamble_id=21 tx_pwr=10dBm attempt=3', false],
+    ['<span class="tg mac">[MAC]</span> RAR window expired', false]];
+  return '<div class="sb"><span>9:41</span><span>5G ▂▄▆█</span></div><div class="app">' +
+  '<div class="back"><span>‹ Case files</span><span>RAN-002</span></div>' +
+  '<span class="eyebrow"><b>RAN-002</b> · RANDOM ACCESS · RAN / OPERATOR</span><h2 class="t">Preambles into the void</h2>' +
+  '<p class="sub" style="color:var(--ink)">After a PRACH change, phones at the cell edge can no longer connect. Phones near the cell are fine.</p>' +
+  '<div class="log">' + L.map((l, i) => '<div class="ln' + (l[1] ? " hl" : "") + '"><i>' + (i + 1) + "</i><span>" + l[0] + "</span></div>" + (i === 0 ? '<div class="ann"><svg viewBox="0 0 16 16"><path d="M2 2v6h10M9 5l3 3-3 3"/></svg>no ramping step: power never rises</div>' : i === 4 ? '<div class="ann"><svg viewBox="0 0 16 16"><path d="M2 2v6h10M9 5l3 3-3 3"/></svg>same power on every attempt</div>' : "")).join("") + "</div>" +
+  '<p class="hint">Tap a line to highlight it. Hold to add a note.</p>' +
+  '<div class="dt"><div class="sh">DEBUG TRAIL · 1 OF 3</div>' +
+    '<div class="st"><span class="pt ok">1</span><div><div class="q past">Edge phones fail, near phones work. Where do you look first?</div><div class="pk"><b>+2</b>Uplink: is Msg1 reaching the cell?</div></div></div>' +
+    '<div class="st"><span class="pt cur">2</span><div><div class="q">Which setting explains why power never rises?</div>' +
+      '<a class="opt">preamble_max=4</a><a class="opt">ramp=0dB, the ramping step</a><a class="opt">target_pwr=-112dBm</a></div></div>' +
+    '<div class="st"><span class="pt">RC</span><div><div class="q past">Root cause</div></div></div></div>' +
+  "</div>" + NAV("Cases");
+}
+document.getElementById("today-light").innerHTML = today();
+document.getElementById("lesson").innerHTML = lesson();
+document.getElementById("case").innerHTML = caseFile();
+document.getElementById("today-dark").innerHTML = today();
+</script>
+</body>
+</html>

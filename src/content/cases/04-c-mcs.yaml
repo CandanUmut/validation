@@ -1,0 +1,59 @@
+id: c-mcs
+order: 4
+title: Twenty percent slower
+tag: Throughput
+brief: Downlink throughput dropped about 20% between build 4411 and build 4412. Same phone, same bench, same signal level.
+setup: LTE 10 MHz, conducted, RSRP -85 dBm, full-buffer UDP.
+log:
+  - "build 4411:  cqi=12  mcs=22  rb=50  rank=2  bler=9.8%  dl=58.1 Mbps"
+  - "build 4411:  cqi=12  mcs=22  rb=50  rank=2  bler=10.3%  dl=57.6 Mbps"
+  - "build 4412:  cqi=12  mcs=18  rb=50  rank=2  bler=0.4%  dl=46.2 Mbps"
+  - "build 4412:  cqi=12  mcs=18  rb=50  rank=2  bler=0.6%  dl=46.5 Mbps"
+decisions:
+  - question: Before you look for a cause, what do you confirm?
+    options:
+      - text: That the drop repeats over several runs on both builds
+        score: 2
+        feedback: Yes. One run each proves nothing. Here both builds are stable across runs, so the drop is real.
+      - text: That the developers changed the scheduler
+        score: 0
+        feedback: You do not know that yet. Evidence first.
+      - text: Nothing, 20% is obviously a bug
+        score: 0
+        feedback: Run-to-run spread can be large. Always check it.
+  - question: Throughput is made of RBs, MCS, rank and block errors. Which of them moved?
+    options:
+      - text: MCS fell from 22 to 18 and BLER fell from 10% to under 1%
+        score: 2
+        feedback: Right. Same CQI, same RBs, same rank. The link is being driven more carefully than before.
+      - text: The number of resource blocks
+        score: 0
+        feedback: It is 50 in both builds.
+      - text: Rank
+        score: 0
+        feedback: Rank is 2 in both builds.
+  - question: Same CQI, lower MCS, almost no block errors. What does that point to?
+    options:
+      - text: "Link adaptation: the CQI-to-MCS mapping or the outer loop target changed"
+        score: 2
+        feedback: Yes. BLER far below 10% means the MCS is too conservative. Throughput is being left unused.
+      - text: Worse radio conditions
+        score: 0
+        feedback: The CQI is unchanged, and BLER went down, not up.
+      - text: A phone problem
+        score: 0
+        feedback: Same phone on both builds, and it reports the same CQI.
+cause:
+  question: Root cause?
+  options:
+    - RF path degraded between runs
+    - "Link adaptation regression: the outer loop now settles far below the 10% BLER target"
+    - The phone reports wrong CQI
+    - TCP window too small
+  answer: 1
+  feedback: A BLER near zero is not good news here. The scheduler is too cautious. The next step is to bisect the changes between 4411 and 4412 and look at the outer-loop settings.
+bug: "DL throughput -20% in build 4412: MCS 22 -> 18 at same CQI 12, BLER 10% -> 0.5% (outer-loop link adaptation too conservative)"
+learn:
+  - Break throughput into RBs, MCS, rank and BLER. One of them will have moved.
+  - Very low BLER usually means lost throughput.
+  - "State the evidence in the bug title: numbers, builds, conditions."

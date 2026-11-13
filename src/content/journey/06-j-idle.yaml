@@ -1,0 +1,89 @@
+id: j-idle
+order: 6
+title: Release, idle and paging
+summary: Most of the time a phone is idle. Reaching it is its own procedure.
+lanes:
+- Phone
+- eNB
+- MME
+steps:
+- from: 1
+  to: 1
+  message: Inactivity timer expires
+  layer: RRC
+  what: No data for some seconds. The eNB decides to free the radio resources.
+  log: '[RRC] inactivity 10s rnti=0x4A21'
+  why: What is the trade-off in the inactivity timer?
+  answer: 'Short: saves resources and battery but causes more connection setups. Long: fewer setups but holds resources and drains battery.'
+- from: 1
+  to: 0
+  message: RRCConnectionRelease
+  layer: RRC
+  what: The phone goes to idle. The core still knows it is attached and in which tracking area list.
+  log: '[RRC] DL-DCCH RRCConnectionRelease cause=other'
+  why: After release, what does the network still know about the phone?
+  answer: That it is registered, and its tracking area list. It does not know the exact cell.
+- from: 0
+  to: 0
+  message: 'Idle: sleep and wake at paging occasions'
+  layer: RRC
+  what: The phone sleeps and wakes once per paging cycle, at a moment worked out from its identity, to check for a page.
+  log: '[RRC] state=IDLE drx_cycle=1.28s'
+  why: Why does a longer paging cycle delay an incoming message?
+  answer: The network must wait for the phone's next wake-up. The cycle length is the worst-case extra delay.
+- from: 0
+  to: 0
+  message: Cell reselection while moving
+  layer: RRC
+  what: The phone moves to a better cell on its own, using priorities and rankings from the SIBs. The network is not told.
+  log: '[RRC] reselect pci=214 -> pci=37'
+  why: Who decides idle-mode mobility, and who decides connected-mode mobility?
+  answer: 'Idle: the phone (reselection). Connected: the network (handover).'
+- from: 0
+  to: 2
+  message: Tracking Area Update when leaving the area list
+  layer: NAS
+  what: If the new cell's tracking area is not in the phone's list, it connects briefly to tell the core where it is.
+  log: '[NAS] UL Tracking Area Update Request tac=0x1A2C'
+  why: What goes wrong if a tracking area update is missed?
+  answer: The core pages the old area. The phone never hears it and incoming traffic fails.
+- from: 2
+  to: 1
+  message: Paging from the core
+  layer: S1AP
+  what: A message arrives for the phone. The MME asks every eNB in the phone's tracking area list to page it.
+  log: '[S1AP] Paging ue_id=s-TMSI tai_list=1A2B,1A2C'
+  why: Why does the core page a whole area and not one cell?
+  answer: It only knows the tracking area list. The idle phone may have reselected many times without telling anyone.
+- from: 1
+  to: 0
+  message: Paging message at the paging occasion
+  layer: RRC
+  what: The eNB sends the page on PDSCH, announced with P-RNTI, at the phone's wake-up moment.
+  log: '[RRC] PCCH Paging s-TMSI match'
+  why: A page was sent but the phone did not answer. Name three causes.
+  answer: The phone was in another area, it missed the paging occasion (coverage or timing), or the page was sent at the wrong moment.
+- from: 0
+  to: 1
+  message: Random access and RRC setup (mt-Access)
+  layer: RRC
+  what: The phone connects with the establishment cause 'mobile terminated access'.
+  log: '[RRC] RRCConnectionRequest cause=mt-Access'
+  why: What does the establishment cause tell the network?
+  answer: 'Why the phone connects: outgoing data or signaling, answering a page, or an emergency. It can be used for admission priority.'
+- from: 0
+  to: 2
+  message: Service Request
+  layer: NAS
+  what: A short NAS message asking to resume service. No full attach is needed.
+  log: '[NAS] UL Service Request'
+  why: Why is a service request faster than an attach?
+  answer: The phone is already registered with a NAS security context and its default bearer exists in the core, so usually no new authentication or bearer creation is needed (the network may still choose to authenticate).
+- from: 2
+  to: 1
+  message: 'Initial Context Setup: bearers restored'
+  layer: S1AP
+  what: The eNB gets the context again, security restarts, the data bearer is back, and the message is delivered.
+  log: '[S1AP] InitialContextSetupRequest  [RRC] RRCConnectionReconfiguration drb1'
+  why: Which part of the context did the eNB lose at release?
+  answer: 'All of it, in classic LTE: the eNB keeps nothing for an idle phone and the MME supplies the context again. (RRC suspend, or RRC_INACTIVE when LTE connects to the 5G core, keeps a context to resume.)'
